@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sannolikhetsräkning - Träning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 6px solid #f5576c;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .visual-aid {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dice-container, .card-container, .coin-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .dice, .card, .coin {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .card {
+            width: 50px;
+            height: 70px;
+            font-size: 1.5em;
+        }
+
+        .red-card {
+            color: red;
+        }
+
+        .black-card {
+            color: black;
+        }
+
+        .coin {
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-color: #b8860b;
+        }
+
+        .input-section {
+            margin: 25px 0;
+        }
+
+        .input-label {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .fraction-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .fraction-input input {
+            width: 100px;
+            padding: 15px;
+            font-size: 1.5em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .fraction-input input:focus {
+            outline: none;
+            border-color: #f5576c;
+        }
+
+        .fraction-line {
+            width: 60px;
+            height: 3px;
+            background: #333;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            font-weight: bold;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .explanation-text {
+            color: #856404;
+            line-height: 1.5;
+        }
+
+        .final-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .final-screen h2 {
+            color: #f5576c;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .star-rating {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .hint {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .hint-title {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+
+        .hint-text {
+            color: #1565c0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .question-text {
+                font-size: 1.1em;
+            }
+            
+            .fraction-input input {
+                width: 80px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Sannolikhetsräkning</h1>
+        <p class="subtitle">Träna på: Antal gynnsamma / Antal möjliga</p>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">Fråga</div>
+                <div class="score-value"><span id="currentQ">1</span>/10</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Rätt</div>
+                <div class="score-value" id="correct">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Poäng</div>
+                <div class="score-value" id="score">0</div>
+            </div>
+        </div>
+
+        <div id="questionArea">
+            <div class="question-card">
+                <div class="question-text" id="questionText"></div>
+                
+                <div id="visualAid" class="visual-aid"></div>
+
+                <div class="hint">
+                    <div class="hint-title">💡 Kom ihåg:</div>
+                    <div class="hint-text">Sannolikhet = <strong>Antal gynnsamma utfall</strong> / <strong>Antal möjliga utfall</strong></div>
+                </div>
+
+                <div class="input-section">
+                    <label class="input-label">Skriv sannolikheten som ett bråk:</label>
+                    <div class="fraction-input">
+                        <input type="number" id="numerator" placeholder="0" min="0">
+                        <div class="fraction-line"></div>
+                        <input type="number" id="denominator" placeholder="0" min="1">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">Kontrollera svar</button>
+                <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">Nästa fråga →</button>
+
+                <div id="feedback" class="feedback hidden"></div>
+            </div>
+        </div>
+
+        <div id="finalScreen" class="final-screen hidden">
+            <h2>🎉 Bra jobbat!</h2>
+            <div class="star-rating" id="stars"></div>
+            <div class="final-score"><span id="finalScore"></span> poäng</div>
+            <p style="font-size: 1.3em; color: #666; margin: 20px 0;">
+                Du fick <span id="finalCorrect"></span> rätt av 10!
+            </p>
+            <button class="btn btn-restart" onclick="restartGame()">🔄 Träna igen</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                text: "Hur stor är sannolikheten att få en 6:a när du kastar en tärning?",
+                visual: "dice",
+                items: ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"],
+                highlight: [5],
+                numerator: 1,
+                denominator: 6,
+                explanation: "Det finns 1 gynnsamt utfall (6:an) av 6 möjliga utfall."
+            },
+            {
+                text: "Hur stor är sannolikheten att få ett jämnt tal när du kastar en tärning?",
+                visual: "dice",
+                items: ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"],
+                highlight: [1, 3, 5],
+                numerator: 3,
+                denominator: 6,
+                explanation: "Jämna tal: 2, 4, 6. Det är 3 gynnsamma utfall av 6 möjliga."
+            },
+            {
+                text: "Hur stor är sannolikheten att få krona när du singlar ett mynt?",
+                visual: "coins",
+                items: ["K", "K"],
+                highlight: [0],
+                numerator: 1,
+                denominator: 2,
+                explanation: "Det finns 1 gynnsamt utfall (krona) av 2 möjliga utfall (krona eller klave)."
+            },
+            {
+                text: "Hur stor är sannolikheten att dra ett rött kort från en vanlig kortlek?",
+                visual: "cards",
+                items: ["♥", "♥", "♦", "♦", "♠", "♠", "♣", "♣"],
+                highlight: [0, 1, 2, 3],
+                numerator: 26,
+                denominator: 52,
+                explanation: "Röda kort: 26 st (13 hjärter + 13 ruter). Totalt finns 52 kort."
+            },
+            {
+                text: "Hur stor är sannolikheten att få mer än 4 när du kastar en tärning?",
+                visual: "dice",
+                items: ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"],
+                highlight: [4, 5],
+                numerator: 2,
+                denominator: 6,
+                explanation: "Mer än 4 innebär 5 eller 6. Det är 2 gynnsama utfall av 6 möjliga."
+            },
+            {
+                text: "Du har 3 röda och 2 blå kulor i en påse. Hur stor är sannolikheten att dra en röd kula?",
+                visual: "balls",
+                items: ["🔴", "🔴", "🔴", "🔵", "🔵"],
+                highlight: [0, 1, 2],
+                numerator: 3,
+                denominator: 5,
+                explanation: "3 röda kulor av totalt 5 kulor."
+            },
+            {
+                text: "Hur stor är sannolikheten att dra en ess från en kortlek?",
+                visual: "cards",
+                items: ["A♥", "A♦", "A♠", "A♣", "...", "...", "...", "..."],
+                highlight: [0, 1, 2, 3],
+                numerator: 4,
+                denominator: 52,
+                explanation: "Det finns 4 ess (ett i varje färg) av totalt 52 kort."
+            },
+            {
+                text: "Du kastar två mynt samtidigt. Hur stor är sannolikheten att få exakt en krona?",
+                visual: "coins",
+                items: ["KK", "KK", "KK", "KK"],
+                highlight: [1, 2],
+                numerator: 2,
+                denominator: 4,
+                explanation: "Möjliga utfall: KK, KK, KK, KK. Exakt en krona: KK och KK. Det är 2 av 4 möjliga."
+            },
+            {
+                text: "Hur stor är sannolikheten att få mindre än 3 när du kastar en tärning?",
+                visual: "dice",
+                items: ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"],
+                highlight: [0, 1],
+                numerator: 2,
+                denominator: 6,
+                explanation: "Mindre än 3 innebär 1 eller 2. Det är 2 gynnsamma utfall av 6 möjliga."
+            },
+            {
+                text: "Du har en påse med 10 kulor: 4 gröna, 3 gula och 3 röda. Hur stor är sannolikheten att dra en grön kula?",
+                visual: "balls",
+                items: ["🟢", "🟢", "🟢", "🟢", "🟡", "🟡", "🟡", "🔴", "🔴", "🔴"],
+                highlight: [0, 1, 2, 3],
+                numerator: 4,
+                denominator: 10,
+                explanation: "4 gröna kulor av totalt 10 kulor."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let correctAnswers = 0;
+
+        function initGame() {
+            currentQuestion = 0;
+            score = 0;
+            correctAnswers = 0;
+            updateScore();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            
+            // Clear inputs
+            document.getElementById('numerator').value = '';
+            document.getElementById('denominator').value = '';
+            
+            // Hide/show buttons
+            document.getElementById('checkBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+            
+            // Create visual
+            createVisual(q);
+        }
+
+        function createVisual(q) {
+            const container = document.getElementById('visualAid');
+            container.innerHTML = '';
+            
+            if (q.visual === 'dice') {
+                const diceDiv = document.createElement('div');
+                diceDiv.className = 'dice-container';
+                q.items.forEach((item, i) => {
+                    const dice = document.createElement('div');
+                    dice.className = 'dice';
+                    dice.textContent = item;
+                    if (q.highlight.includes(i)) {
+                        dice.style.background = '#ffeb3b';
+                        dice.style.border = '3px solid #f57c00';
+                    }
+                    diceDiv.appendChild(dice);
+                });
+                container.appendChild(diceDiv);
+            } else if (q.visual === 'coins') {
+                const coinDiv = document.createElement('div');
+                coinDiv.className = 'coin-container';
+                q.items.forEach((item, i) => {
+                    const coin = document.createElement('div');
+                    coin.className = 'coin';
+                    coin.textContent = item;
+                    if (q.highlight.includes(i)) {
+                        coin.style.boxShadow = '0 0 20px #ff5722';
+                    }
+                    coinDiv.appendChild(coin);
+                });
+                container.appendChild(coinDiv);
+            } else if (q.visual === 'cards') {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card-container';
+                q.items.forEach((item, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    if (item.includes('♥') || item.includes('♦')) {
+                        card.classList.add('red-card');
+                    } else {
+                        card.classList.add('black-card');
+                    }
+                    card.textContent = item;
+                    if (q.highlight.includes(i)) {
+                        card.style.background = '#ffeb3b';
+                        card.style.border = '3px solid #f57c00';
+                    }
+                    cardDiv.appendChild(card);
+                });
+                container.appendChild(cardDiv);
+            } else if (q.visual === 'balls') {
+                const ballDiv = document.createElement('div');
+                ballDiv.className = 'dice-container';
+                q.items.forEach((item, i) => {
+                    const ball = document.createElement('div');
+                    ball.style.fontSize = '2.5em';
+                    ball.textContent = item;
+                    if (q.highlight.includes(i)) {
+                        ball.style.textShadow = '0 0 15px #ff5722';
+                        ball.style.transform = 'scale(1.2)';
+                    }
+                    ballDiv.appendChild(ball);
+                });
+                container.appendChild(ballDiv);
+            }
+        }
+
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function checkAnswer() {
+            const userNum = parseInt(document.getElementById('numerator').value);
+            const userDen = parseInt(document.getElementById('denominator').value);
+            
+            if (!userNum || !userDen || userDen === 0) {
+                alert('Fyll i både täljare och nämnare!');
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            
+            // Simplify both fractions
+            const userGCD = gcd(userNum, userDen);
+            const simplifiedUserNum = userNum / userGCD;
+            const simplifiedUserDen = userDen / userGCD;
+            
+            const correctGCD = gcd(q.numerator, q.denominator);
+            const simplifiedCorrectNum = q.numerator / correctGCD;
+            const simplifiedCorrectDen = q.denominator / correctGCD;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'wrong');
+            
+            if (simplifiedUserNum === simplifiedCorrectNum && simplifiedUserDen === simplifiedCorrectDen) {
+                feedback.classList.add('correct');
+                feedback.innerHTML = `
+                    <div>🎯 Rätt! Bra jobbat!</div>
+                    <div class="explanation">
+                        <div class="explanation-title">Förklaring:</div>
+                        <div class="explanation-text">${q.explanation}</div>
+                    </div>
+                `;
+                score += 10;
+                correctAnswers++;
+            } else {
+                feedback.classList.add('wrong');
+                feedback.innerHTML = `
+                    <div>❌ Fel svar. Rätt svar är ${simplifiedCorrectNum}/${simplifiedCorrectDen}</div>
+                    <div class="explanation">
+                        <div class="explanation-title">Förklaring:</div>
+                        <div class="explanation-text">${q.explanation}</div>
+                    </div>
+                `;
+            }
+            
+            updateScore();
+            document.getElementById('checkBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showFinalScreen();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('correct').textContent = correctAnswers;
+        }
+
+        function showFinalScreen() {
+            document.getElementById('questionArea').classList.add('hidden');
+            document.getElementById('finalScreen').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalCorrect').textContent = correctAnswers;
+            
+            const percentage = (correctAnswers / questions.length) * 100;
+            let stars = '';
+            if (percentage >= 90) stars = '⭐⭐⭐⭐⭐';
+            else if (percentage >= 70) stars = '⭐⭐⭐⭐';
+            else if (percentage >= 50) stars = '⭐⭐⭐';
+            else if (percentage >= 30) stars = '⭐⭐';
+            else stars = '⭐';
+            
+            document.getElementById('stars').textContent = stars;
+        }
+
+        function restartGame() {
+            document.getElementById('questionArea').classList.remove('hidden');
+            document.getElementById('finalScreen').classList.add('hidden');
+            initGame();
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (!document.getElementById('checkBtn').classList.contains('hidden')) {
+                    checkAnswer();
+                } else if (!document.getElementById('nextBtn').classList.contains('hidden')) {
+                    nextQuestion();
+                }
+            }
+        });
+
+        // Start game
+        initGame();
+    </script>
+</body>
+</html>

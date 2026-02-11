@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IM's Sannolikhetssimulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Garamond', serif;
+            background: linear-gradient(135deg, #7b2cbf 0%, #5a189a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            text-align: center;
+            color: #7b2cbf;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .simulator-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .simulator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .simulator-title {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            font-size: 1.5em;
+            color: #7b2cbf;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .display-area {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .dice-display {
+            font-size: 5em;
+            animation: spin 0.5s ease-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(0.5); opacity: 0.5; }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); opacity: 1; }
+        }
+
+        .coin-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border: 5px solid #b8860b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            animation: flip 0.6s ease-out;
+            padding: 10px;
+            text-align: center;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0deg) scale(0.8); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(360deg) scale(1); }
+        }
+
+        .card-display {
+            width: 100px;
+            height: 140px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: draw 0.4s ease-out;
+        }
+
+        @keyframes draw {
+            0% { transform: translateY(-50px) scale(0.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .red-suit {
+            color: #e74c3c;
+        }
+
+        .black-suit {
+            color: #2c3e50;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3em;
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #7b2cbf 0%, #5a189a 100%);
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .stats-title {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            font-weight: bold;
+            color: #7b2cbf;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 1em;
+        }
+
+        .stats-label {
+            color: #555;
+        }
+
+        .stats-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #e74c3c;
+            color: white;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+        }
+
+        .history {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            min-height: 40px;
+        }
+
+        .history-item {
+            padding: 5px 12px;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .milestone-alert {
+            background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .milestone-title {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .milestone-content {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .fraction {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .simulator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .dice-display {
+                font-size: 4em;
+            }
+
+            .coin-display {
+                width: 100px;
+                height: 100px;
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 IM's Sannolikhetssimulator</h1>
+        <p class="subtitle">Testa och se vad som händer!</p>
+
+        <div class="simulator-grid">
+            <!-- TÄRNING -->
+            <div class="simulator-card">
+                <div class="simulator-title">🎲 Kasta tärning</div>
+                
+                <div class="display-area">
+                    <div class="dice-display" id="diceResult">⚅</div>
+                </div>
+
+                <button class="btn-action" onclick="rollDice()">Kasta tärning!</button>
+
+                <div id="diceMilestone"></div>
+
+                <div class="history" id="diceHistory"></div>
+
+                <div class="stats">
+                    <div class="stats-title">Statistik</div>
+                    <div class="stats-row">
+                        <span class="stats-label">Antal kast:</span>
+                        <span class="stats-value" id="diceCount">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Sexor (förväntat: 1/6 ≈ 17%):</span>
+                        <span class="stats-value"><span id="diceSixes">0</span> st (<span id="diceSixPercent">0</span>%)</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Jämna tal (förväntat: 1/2 = 50%):</span>
+                        <span class="stats-value"><span id="diceEven">0</span> st (<span id="diceEvenPercent">0</span>%)</span>
+                    </div>
+                    <button class="btn-reset" onclick="resetDice()">Nollställ</button>
+                </div>
+            </div>
+
+            <!-- MYNT -->
+            <div class="simulator-card">
+                <div class="simulator-title">🪙 Singla mynt</div>
+                
+                <div class="display-area">
+                    <div class="coin-display" id="coinResult">?</div>
+                </div>
+
+                <button class="btn-action" onclick="flipCoin()">Singla mynt!</button>
+
+                <div id="coinMilestone"></div>
+
+                <div class="history" id="coinHistory"></div>
+
+                <div class="stats">
+                    <div class="stats-title">Statistik</div>
+                    <div class="stats-row">
+                        <span class="stats-label">Antal singlingar:</span>
+                        <span class="stats-value" id="coinCount">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Krona (förväntat: 1/2 = 50%):</span>
+                        <span class="stats-value"><span id="coinHeads">0</span> st (<span id="coinHeadsPercent">0</span>%)</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Klave (förväntat: 1/2 = 50%):</span>
+                        <span class="stats-value"><span id="coinTails">0</span> st (<span id="coinTailsPercent">0</span>%)</span>
+                    </div>
+                    <button class="btn-reset" onclick="resetCoin()">Nollställ</button>
+                </div>
+            </div>
+
+            <!-- KORT -->
+            <div class="simulator-card">
+                <div class="simulator-title">🃏 Dra kort</div>
+                
+                <div class="display-area">
+                    <div class="card-display" id="cardResult">
+                        <span id="cardValue">?</span>
+                    </div>
+                </div>
+
+                <button class="btn-action" onclick="drawCard()">Dra kort!</button>
+
+                <div id="cardMilestone"></div>
+
+                <div class="history" id="cardHistory"></div>
+
+                <div class="stats">
+                    <div class="stats-title">Statistik</div>
+                    <div class="stats-row">
+                        <span class="stats-label">Antal kort:</span>
+                        <span class="stats-value" id="cardCount">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Röda kort (förväntat: 1/2 = 50%):</span>
+                        <span class="stats-value"><span id="cardRed">0</span> st (<span id="cardRedPercent">0</span>%)</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Ess (förväntat: 1/13 ≈ 8%):</span>
+                        <span class="stats-value"><span id="cardAces">0</span> st (<span id="cardAcesPercent">0</span>%)</span>
+                    </div>
+                    <button class="btn-reset" onclick="resetCard()">Nollställ</button>
+                </div>
+            </div>
+
+            <!-- TVÅ TÄRNINGAR -->
+            <div class="simulator-card">
+                <div class="simulator-title">🎲🎲 Kasta två tärningar</div>
+                
+                <div class="display-area">
+                    <div style="display: flex; gap: 20px;">
+                        <div class="dice-display" id="dice1Result">⚅</div>
+                        <div class="dice-display" id="dice2Result">⚅</div>
+                    </div>
+                </div>
+
+                <button class="btn-action" onclick="rollTwoDice()">Kasta båda!</button>
+
+                <div id="twoDiceMilestone"></div>
+
+                <div class="history" id="twoDiceHistory"></div>
+
+                <div class="stats">
+                    <div class="stats-title">Statistik</div>
+                    <div class="stats-row">
+                        <span class="stats-label">Antal kast:</span>
+                        <span class="stats-value" id="twoDiceCount">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Summa 7 (förväntat: 1/6 ≈ 17%):</span>
+                        <span class="stats-value"><span id="twoDiceSeven">0</span> st (<span id="twoDiceSevenPercent">0</span>%)</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Dubbel (förväntat: 1/6 ≈ 17%):</span>
+                        <span class="stats-value"><span id="twoDiceDouble">0</span> st (<span id="twoDiceDoublePercent">0</span>%)</span>
+                    </div>
+                    <button class="btn-reset" onclick="resetTwoDice()">Nollställ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+        
+        // Helper function to simplify fractions
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function simplifyFraction(numerator, denominator) {
+            const divisor = gcd(numerator, denominator);
+            return {
+                num: numerator / divisor,
+                den: denominator / divisor
+            };
+        }
+
+        // Dice stats
+        let diceStats = { count: 0, sixes: 0, even: 0, history: [], milestones: [] };
+        
+        function rollDice() {
+            const result = Math.floor(Math.random() * 6) + 1;
+            
+            document.getElementById('diceResult').textContent = diceSymbols[result - 1];
+            document.getElementById('diceResult').style.animation = 'none';
+            setTimeout(() => {
+                document.getElementById('diceResult').style.animation = 'spin 0.5s ease-out';
+            }, 10);
+            
+            diceStats.count++;
+            if (result === 6) diceStats.sixes++;
+            if (result % 2 === 0) diceStats.even++;
+            diceStats.history.unshift(result);
+            if (diceStats.history.length > 10) diceStats.history.pop();
+            
+            updateDiceStats();
+            checkDiceMilestone();
+        }
+
+        function checkDiceMilestone() {
+            const count = diceStats.count;
+            if ((count === 10 || count === 20) && !diceStats.milestones.includes(count)) {
+                diceStats.milestones.push(count);
+                showDiceMilestone(count);
+            }
+        }
+
+        function showDiceMilestone(count) {
+            const sixFrac = simplifyFraction(diceStats.sixes, count);
+            const evenFrac = simplifyFraction(diceStats.even, count);
+            const sixPercent = Math.round((diceStats.sixes / count) * 100);
+            const evenPercent = Math.round((diceStats.even / count) * 100);
+            
+            const milestoneEl = document.getElementById('diceMilestone');
+            milestoneEl.innerHTML = `
+                <div class="milestone-alert">
+                    <div class="milestone-title">🎯 Resultat efter ${count} kast!</div>
+                    <div class="milestone-content">
+                        <strong>Sexor:</strong> <span class="fraction">${sixFrac.num}/${sixFrac.den}</span> (${sixPercent}%)<br>
+                        <strong>Jämna tal:</strong> <span class="fraction">${evenFrac.num}/${evenFrac.den}</span> (${evenPercent}%)
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                milestoneEl.innerHTML = '';
+            }, 8000);
+        }
+
+        function updateDiceStats() {
+            document.getElementById('diceCount').textContent = diceStats.count;
+            document.getElementById('diceSixes').textContent = diceStats.sixes;
+            document.getElementById('diceSixPercent').textContent = 
+                diceStats.count > 0 ? Math.round(diceStats.sixes / diceStats.count * 100) : 0;
+            document.getElementById('diceEven').textContent = diceStats.even;
+            document.getElementById('diceEvenPercent').textContent = 
+                diceStats.count > 0 ? Math.round(diceStats.even / diceStats.count * 100) : 0;
+            
+            const historyEl = document.getElementById('diceHistory');
+            historyEl.innerHTML = diceStats.history.map(n => 
+                `<span class="history-item">${n}</span>`
+            ).join('');
+        }
+
+        function resetDice() {
+            diceStats = { count: 0, sixes: 0, even: 0, history: [], milestones: [] };
+            document.getElementById('diceMilestone').innerHTML = '';
+            updateDiceStats();
+        }
+
+        // Coin stats
+        let coinStats = { count: 0, heads: 0, tails: 0, history: [], milestones: [] };
+
+        function flipCoin() {
+            const isHeads = Math.random() < 0.5;
+            const display = isHeads ? 'Krona' : 'Klave';
+            
+            document.getElementById('coinResult').textContent = display;
+            document.getElementById('coinResult').style.animation = 'none';
+            setTimeout(() => {
+                document.getElementById('coinResult').style.animation = 'flip 0.6s ease-out';
+            }, 10);
+            
+            coinStats.count++;
+            if (isHeads) coinStats.heads++;
+            else coinStats.tails++;
+            coinStats.history.unshift(display);
+            if (coinStats.history.length > 10) coinStats.history.pop();
+            
+            updateCoinStats();
+            checkCoinMilestone();
+        }
+
+        function checkCoinMilestone() {
+            const count = coinStats.count;
+            if ((count === 10 || count === 20) && !coinStats.milestones.includes(count)) {
+                coinStats.milestones.push(count);
+                showCoinMilestone(count);
+            }
+        }
+
+        function showCoinMilestone(count) {
+            const headFrac = simplifyFraction(coinStats.heads, count);
+            const tailFrac = simplifyFraction(coinStats.tails, count);
+            const headPercent = Math.round((coinStats.heads / count) * 100);
+            const tailPercent = Math.round((coinStats.tails / count) * 100);
+            
+            const milestoneEl = document.getElementById('coinMilestone');
+            milestoneEl.innerHTML = `
+                <div class="milestone-alert">
+                    <div class="milestone-title">🎯 Resultat efter ${count} singlingar!</div>
+                    <div class="milestone-content">
+                        <strong>Krona:</strong> <span class="fraction">${headFrac.num}/${headFrac.den}</span> (${headPercent}%)<br>
+                        <strong>Klave:</strong> <span class="fraction">${tailFrac.num}/${tailFrac.den}</span> (${tailPercent}%)
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                milestoneEl.innerHTML = '';
+            }, 8000);
+        }
+
+        function updateCoinStats() {
+            document.getElementById('coinCount').textContent = coinStats.count;
+            document.getElementById('coinHeads').textContent = coinStats.heads;
+            document.getElementById('coinHeadsPercent').textContent = 
+                coinStats.count > 0 ? Math.round(coinStats.heads / coinStats.count * 100) : 0;
+            document.getElementById('coinTails').textContent = coinStats.tails;
+            document.getElementById('coinTailsPercent').textContent = 
+                coinStats.count > 0 ? Math.round(coinStats.tails / coinStats.count * 100) : 0;
+            
+            const historyEl = document.getElementById('coinHistory');
+            historyEl.innerHTML = coinStats.history.map(r => 
+                `<span class="history-item">${r}</span>`
+            ).join('');
+        }
+
+        function resetCoin() {
+            coinStats = { count: 0, heads: 0, tails: 0, history: [], milestones: [] };
+            document.getElementById('coinMilestone').innerHTML = '';
+            updateCoinStats();
+        }
+
+        // Card stats
+        let cardStats = { count: 0, red: 0, aces: 0, history: [], milestones: [] };
+        const suits = [
+            { symbol: '♥', color: 'red' },
+            { symbol: '♦', color: 'red' },
+            { symbol: '♠', color: 'black' },
+            { symbol: '♣', color: 'black' }
+        ];
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+        function drawCard() {
+            const suit = suits[Math.floor(Math.random() * suits.length)];
+            const value = values[Math.floor(Math.random() * values.length)];
+            
+            const cardEl = document.getElementById('cardValue');
+            cardEl.textContent = value + suit.symbol;
+            cardEl.className = suit.color === 'red' ? 'red-suit' : 'black-suit';
+            
+            const cardDisplay = document.getElementById('cardResult');
+            cardDisplay.style.animation = 'none';
+            setTimeout(() => {
+                cardDisplay.style.animation = 'draw 0.4s ease-out';
+            }, 10);
+            
+            cardStats.count++;
+            if (suit.color === 'red') cardStats.red++;
+            if (value === 'A') cardStats.aces++;
+            cardStats.history.unshift(value + suit.symbol);
+            if (cardStats.history.length > 10) cardStats.history.pop();
+            
+            updateCardStats();
+            checkCardMilestone();
+        }
+
+        function checkCardMilestone() {
+            const count = cardStats.count;
+            if ((count === 10 || count === 20) && !cardStats.milestones.includes(count)) {
+                cardStats.milestones.push(count);
+                showCardMilestone(count);
+            }
+        }
+
+        function showCardMilestone(count) {
+            const redFrac = simplifyFraction(cardStats.red, count);
+            const aceFrac = simplifyFraction(cardStats.aces, count);
+            const redPercent = Math.round((cardStats.red / count) * 100);
+            const acePercent = Math.round((cardStats.aces / count) * 100);
+            
+            const milestoneEl = document.getElementById('cardMilestone');
+            milestoneEl.innerHTML = `
+                <div class="milestone-alert">
+                    <div class="milestone-title">🎯 Resultat efter ${count} kort!</div>
+                    <div class="milestone-content">
+                        <strong>Röda kort:</strong> <span class="fraction">${redFrac.num}/${redFrac.den}</span> (${redPercent}%)<br>
+                        <strong>Ess:</strong> <span class="fraction">${aceFrac.num}/${aceFrac.den}</span> (${acePercent}%)
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                milestoneEl.innerHTML = '';
+            }, 8000);
+        }
+
+        function updateCardStats() {
+            document.getElementById('cardCount').textContent = cardStats.count;
+            document.getElementById('cardRed').textContent = cardStats.red;
+            document.getElementById('cardRedPercent').textContent = 
+                cardStats.count > 0 ? Math.round(cardStats.red / cardStats.count * 100) : 0;
+            document.getElementById('cardAces').textContent = cardStats.aces;
+            document.getElementById('cardAcesPercent').textContent = 
+                cardStats.count > 0 ? Math.round(cardStats.aces / cardStats.count * 100) : 0;
+            
+            const historyEl = document.getElementById('cardHistory');
+            historyEl.innerHTML = cardStats.history.map(c => 
+                `<span class="history-item">${c}</span>`
+            ).join('');
+        }
+
+        function resetCard() {
+            cardStats = { count: 0, red: 0, aces: 0, history: [], milestones: [] };
+            document.getElementById('cardMilestone').innerHTML = '';
+            updateCardStats();
+        }
+
+        // Two dice stats
+        let twoDiceStats = { count: 0, seven: 0, doubles: 0, history: [], milestones: [] };
+
+        function rollTwoDice() {
+            const dice1 = Math.floor(Math.random() * 6) + 1;
+            const dice2 = Math.floor(Math.random() * 6) + 1;
+            
+            document.getElementById('dice1Result').textContent = diceSymbols[dice1 - 1];
+            document.getElementById('dice2Result').textContent = diceSymbols[dice2 - 1];
+            
+            document.getElementById('dice1Result').style.animation = 'none';
+            document.getElementById('dice2Result').style.animation = 'none';
+            setTimeout(() => {
+                document.getElementById('dice1Result').style.animation = 'spin 0.5s ease-out';
+                document.getElementById('dice2Result').style.animation = 'spin 0.5s ease-out 0.1s';
+            }, 10);
+            
+            const sum = dice1 + dice2;
+            twoDiceStats.count++;
+            if (sum === 7) twoDiceStats.seven++;
+            if (dice1 === dice2) twoDiceStats.doubles++;
+            twoDiceStats.history.unshift(dice1 + '+' + dice2 + '=' + sum);
+            if (twoDiceStats.history.length > 10) twoDiceStats.history.pop();
+            
+            updateTwoDiceStats();
+            checkTwoDiceMilestone();
+        }
+
+        function checkTwoDiceMilestone() {
+            const count = twoDiceStats.count;
+            if ((count === 10 || count === 20) && !twoDiceStats.milestones.includes(count)) {
+                twoDiceStats.milestones.push(count);
+                showTwoDiceMilestone(count);
+            }
+        }
+
+        function showTwoDiceMilestone(count) {
+            const sevenFrac = simplifyFraction(twoDiceStats.seven, count);
+            const doubleFrac = simplifyFraction(twoDiceStats.doubles, count);
+            const sevenPercent = Math.round((twoDiceStats.seven / count) * 100);
+            const doublePercent = Math.round((twoDiceStats.doubles / count) * 100);
+            
+            const milestoneEl = document.getElementById('twoDiceMilestone');
+            milestoneEl.innerHTML = `
+                <div class="milestone-alert">
+                    <div class="milestone-title">🎯 Resultat efter ${count} kast!</div>
+                    <div class="milestone-content">
+                        <strong>Summa 7:</strong> <span class="fraction">${sevenFrac.num}/${sevenFrac.den}</span> (${sevenPercent}%)<br>
+                        <strong>Dubbletter:</strong> <span class="fraction">${doubleFrac.num}/${doubleFrac.den}</span> (${doublePercent}%)
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                milestoneEl.innerHTML = '';
+            }, 8000);
+        }
+
+        function updateTwoDiceStats() {
+            document.getElementById('twoDiceCount').textContent = twoDiceStats.count;
+            document.getElementById('twoDiceSeven').textContent = twoDiceStats.seven;
+            document.getElementById('twoDiceSevenPercent').textContent = 
+                twoDiceStats.count > 0 ? Math.round(twoDiceStats.seven / twoDiceStats.count * 100) : 0;
+            document.getElementById('twoDiceDouble').textContent = twoDiceStats.doubles;
+            document.getElementById('twoDiceDoublePercent').textContent = 
+                twoDiceStats.count > 0 ? Math.round(twoDiceStats.doubles / twoDiceStats.count * 100) : 0;
+            
+            const historyEl = document.getElementById('twoDiceHistory');
+            historyEl.innerHTML = twoDiceStats.history.map(h => 
+                `<span class="history-item">${h}</span>`
+            ).join('');
+        }
+
+        function resetTwoDice() {
+            twoDiceStats = { count: 0, seven: 0, doubles: 0, history: [], milestones: [] };
+            document.getElementById('twoDiceMilestone').innerHTML = '';
+            updateTwoDiceStats();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMs Sannolikhetsspel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .progress-info {
+            text-align: center;
+            font-size: 1.1em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .probability-line-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .probability-line {
+            position: relative;
+            height: 80px;
+            background: linear-gradient(to right, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #5f27cd);
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .line-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .marker {
+            text-align: center;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .marker-value {
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        .marker-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .selection-area {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-left: 6px solid #667eea;
+        }
+
+        .event-text {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .event-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 18px 35px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-probability {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-width: 90px;
+        }
+
+        .btn-probability:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            padding: 15px 40px;
+        }
+
+        .placed-events-section {
+            margin-top: 40px;
+        }
+
+        .placed-events-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .visual-probability-line {
+            position: relative;
+            margin: 50px 0;
+        }
+
+        .visual-line {
+            height: 15px;
+            background: linear-gradient(to right, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #5f27cd);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .visual-markers {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 15px;
+        }
+
+        .visual-marker {
+            text-align: center;
+            width: 60px;
+        }
+
+        .visual-marker-line {
+            width: 2px;
+            height: 20px;
+            background: #333;
+            margin: 0 auto 5px;
+        }
+
+        .visual-marker-value {
+            font-size: 1em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .events-on-line {
+            position: relative;
+            min-height: 400px;
+            margin-top: 20px;
+        }
+
+        .probability-column {
+            position: absolute;
+            width: 14%;
+            top: 0;
+        }
+
+        .probability-column[data-prob="0"] { left: 0%; }
+        .probability-column[data-prob="5"] { left: 5%; }
+        .probability-column[data-prob="25"] { left: 25%; }
+        .probability-column[data-prob="50"] { left: 50%; transform: translateX(-50%); }
+        .probability-column[data-prob="75"] { left: 75%; }
+        .probability-column[data-prob="95"] { left: 95%; transform: translateX(-100%); }
+        .probability-column[data-prob="100"] { left: 100%; transform: translateX(-100%); }
+
+        .event-card {
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            cursor: move;
+            border-left: 4px solid #667eea;
+        }
+
+        .event-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .event-card-text {
+            font-size: 0.95em;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .event-card-actions {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-small:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background: #f5576c;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .final-view {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .final-view h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .drag-over {
+            border: 3px dashed #667eea;
+            background: #e8eaf6;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .event-text {
+                font-size: 1.1em;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+
+            .probability-column {
+                position: relative !important;
+                width: 100% !important;
+                left: 0 !important;
+                transform: none !important;
+                margin-bottom: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 10px;
+            }
+
+            .probability-column::before {
+                content: attr(data-prob) '%';
+                display: block;
+                font-weight: bold;
+                color: #667eea;
+                font-size: 1.2em;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .events-on-line {
+                position: relative !important;
+                min-height: auto !important;
+            }
+
+            .event-card-text {
+                font-size: 0.9em;
+            }
+
+            .btn-small {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 IMs Sannolikhetsspel</h1>
+        <p class="subtitle">Diskutera och placera händelser tillsammans!</p>
+
+        <div id="selectionArea" class="selection-area">
+            <p class="progress-info">Händelse <span id="currentNumber">1</span> av <span id="totalNumber">26</span></p>
+            
+            <div class="event-text">
+                <span class="event-number" id="eventNumber">1</span>
+                <span id="eventText"></span>
+            </div>
+
+            <div class="buttons" id="buttonContainer"></div>
+        </div>
+
+        <div class="probability-line-container">
+            <h3 style="text-align: center; color: #667eea; margin-bottom: 15px;">Sannolikhetslinje</h3>
+            <div class="probability-line"></div>
+            <div class="line-markers">
+                <div class="marker">
+                    <div class="marker-value">0%</div>
+                    <div class="marker-label">Omöjligt</div>
+                </div>
+                <div class="marker">
+                    <div class="marker-value">5%</div>
+                    <div class="marker-label">Väldigt låg</div>
+                </div>
+                <div class="marker">
+                    <div class="marker-value">25%</div>
+                    <div class="marker-label">Låg</div>
+                </div>
+                <div class="marker">
+                    <div class="marker-value">50%</div>
+                    <div class="marker-label">50/50</div>
+                </div>
+                <div class="marker">
+                    <div class="marker-value">75%</div>
+                    <div class="marker-label">Hög</div>
+                </div>
+                <div class="marker">
+                    <div class="marker-value">95%</div>
+                    <div class="marker-label">Nästan säker</div>
+                </div>
+                <div class="marker">
+                    <div class="marker-value">100%</div>
+                    <div class="marker-label">Säkert</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="placedEventsSection" class="placed-events-section hidden">
+            <h2 class="placed-events-title">Era placerade händelser</h2>
+            
+            <div class="visual-probability-line">
+                <div class="visual-line"></div>
+                <div class="visual-markers">
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">0%</div>
+                    </div>
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">5%</div>
+                    </div>
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">25%</div>
+                    </div>
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">50%</div>
+                    </div>
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">75%</div>
+                    </div>
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">95%</div>
+                    </div>
+                    <div class="visual-marker">
+                        <div class="visual-marker-line"></div>
+                        <div class="visual-marker-value">100%</div>
+                    </div>
+                </div>
+                
+                <div class="events-on-line" id="eventsOnLine"></div>
+            </div>
+        </div>
+
+        <div id="finalView" class="final-view hidden">
+            <h2>✅ Alla händelser placerade!</h2>
+            <p style="font-size: 1.3em; color: #666; margin: 20px 0;">
+                Nu kan ni diskutera resultatet och flytta händelser om ni vill ändra er!
+            </p>
+            <div class="summary-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Totalt placerade</div>
+                    <div class="stat-value" id="totalPlaced">26</div>
+                </div>
+            </div>
+            <button class="btn btn-restart" onclick="restartGame()">🔄 Börja om</button>
+        </div>
+    </div>
+
+    <script>
+        const allEvents = [
+            // 0% - Omöjligt
+            { text: "Att det snöar inomhus i klassrummet idag", id: 1 },
+            { text: "Att du springer 100 meter på under 5 sekunder", id: 2 },
+            { text: "Att solen går upp i väster imorgon", id: 3 },
+            { text: "Att du hittar en levande dinosaurie på skolområdet", id: 4 },
+            
+            // 5% - Väldigt låg chans
+            { text: "Att någon i klassen fyller år just idag", id: 5 },
+            { text: "Att brandlarmet går av av misstag under skoldagen", id: 6 },
+            { text: "Att hela klassen får sluta tidigare utan förvarning", id: 7 },
+            { text: "Att skolans Wi-Fi ligger nere hela dagen", id: 8 },
+            
+            // 25% - Låg chans
+            { text: "Att bussen är mer än fem minuter sen", id: 9 },
+            { text: "Att läraren bjuder på fika eller godis", id: 10 },
+            { text: "Att någon spiller mat eller dryck i matsalen", id: 11 },
+            { text: "Att en lektion blir inställd samma dag", id: 12 },
+            
+            // 50% - Lika stor chans (50/50)
+            { text: "Att du vinner eller förlorar i sten–sax–påse", id: 13 },
+            { text: "Att du gissar rätt på om ett dolt kort är rött eller svart", id: 14 },
+            { text: "Att ditt mobilbatteri är under 20 % någon gång idag", id: 15 },
+            { text: "Att det blir krona eller klave när du singlar slant", id: 16 },
+            
+            // 75% - Hög chans
+            { text: "Att någon i klassen kommer sent till en lektion idag", id: 17 },
+            { text: "Att minst en elev i klassen är trött", id: 18 },
+            { text: "Att någon pratar eller stör under lektionen", id: 19 },
+            { text: "Att någon har glömt dator, laddare eller material", id: 20 },
+            
+            // 95% - Nästan säkert
+            { text: "Att någon använder sin mobil under skoldagen", id: 21 },
+            { text: "Att någon kollar TikTok, Instagram eller Snapchat idag", id: 22 },
+            { text: "Att minst en elev säger något i stil med \"hur länge är det kvar?\"", id: 23 },
+            { text: "Att någon klagar på att tiden går långsamt", id: 24 },
+            
+            // 100% - Säkert
+            { text: "Att tiden går framåt under lektionen", id: 25 },
+            { text: "Att skoldagen tar slut idag", id: 26 }
+        ];
+
+        let events = [];
+        let currentEventIndex = 0;
+        let placedEvents = {
+            0: [],
+            5: [],
+            25: [],
+            50: [],
+            75: [],
+            95: [],
+            100: []
+        };
+
+        const probabilityOptions = [0, 5, 25, 50, 75, 95, 100];
+        const probabilityLabels = {
+            0: "0% - Omöjligt",
+            5: "5% - Väldigt låg chans",
+            25: "25% - Låg chans",
+            50: "50% - Lika stor chans",
+            75: "75% - Hög chans",
+            95: "95% - Nästan säkert",
+            100: "100% - Säkert"
+        };
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initGame() {
+            events = shuffleArray(allEvents);
+            document.getElementById('totalNumber').textContent = events.length;
+            showEvent();
+            createButtons();
+        }
+
+        function showEvent() {
+            if (currentEventIndex >= events.length) {
+                showFinalView();
+                return;
+            }
+
+            const event = events[currentEventIndex];
+            document.getElementById('eventText').textContent = event.text;
+            document.getElementById('eventNumber').textContent = currentEventIndex + 1;
+            document.getElementById('currentNumber').textContent = currentEventIndex + 1;
+        }
+
+        function createButtons() {
+            const container = document.getElementById('buttonContainer');
+            container.innerHTML = '';
+            
+            probabilityOptions.forEach(prob => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-probability';
+                btn.textContent = `${prob}%`;
+                btn.onclick = () => placeEvent(prob);
+                container.appendChild(btn);
+            });
+        }
+
+        function placeEvent(probability) {
+            const event = events[currentEventIndex];
+            placedEvents[probability].push({
+                ...event,
+                probability: probability
+            });
+
+            updatePlacedEventsDisplay();
+            currentEventIndex++;
+            showEvent();
+        }
+
+        function updatePlacedEventsDisplay() {
+            const container = document.getElementById('eventsOnLine');
+            container.innerHTML = '';
+
+            let hasAnyEvents = false;
+
+            probabilityOptions.forEach(prob => {
+                if (placedEvents[prob].length > 0) {
+                    hasAnyEvents = true;
+                    
+                    const column = document.createElement('div');
+                    column.className = 'probability-column';
+                    column.setAttribute('data-prob', prob);
+                    column.ondragover = handleDragOver;
+                    column.ondrop = handleDrop;
+                    column.ondragleave = handleDragLeave;
+
+                    placedEvents[prob].forEach(event => {
+                        const card = createEventCard(event);
+                        column.appendChild(card);
+                    });
+
+                    container.appendChild(column);
+                }
+            });
+
+            if (hasAnyEvents) {
+                document.getElementById('placedEventsSection').classList.remove('hidden');
+            } else {
+                document.getElementById('placedEventsSection').classList.add('hidden');
+            }
+        }
+
+        function createEventCard(event) {
+            const card = document.createElement('div');
+            card.className = 'event-card';
+            card.draggable = true;
+            card.setAttribute('data-event-id', event.id);
+            card.setAttribute('data-probability', event.probability);
+            card.ondragstart = handleDragStart;
+            card.ondragend = handleDragEnd;
+            
+            const text = document.createElement('div');
+            text.className = 'event-card-text';
+            text.textContent = event.text;
+            
+            const actions = document.createElement('div');
+            actions.className = 'event-card-actions';
+            
+            const moveBtn = document.createElement('button');
+            moveBtn.className = 'btn-small';
+            moveBtn.textContent = '↔️';
+            moveBtn.title = 'Flytta';
+            moveBtn.onclick = (e) => {
+                e.stopPropagation();
+                showMoveOptions(event);
+            };
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn-small btn-delete';
+            deleteBtn.textContent = '✕';
+            deleteBtn.title = 'Ta bort';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteEvent(event);
+            };
+            
+            actions.appendChild(moveBtn);
+            actions.appendChild(deleteBtn);
+            
+            card.appendChild(text);
+            card.appendChild(actions);
+            
+            return card;
+        }
+
+        function showMoveOptions(event) {
+            const newProb = prompt(`Flytta till vilken sannolikhet? (${probabilityOptions.join(', ')})`);
+            if (newProb !== null && probabilityOptions.includes(parseInt(newProb))) {
+                moveEvent(event, parseInt(newProb));
+            }
+        }
+
+        function moveEvent(event, newProbability) {
+            // Remove from old probability
+            placedEvents[event.probability] = placedEvents[event.probability].filter(e => e.id !== event.id);
+            
+            // Add to new probability
+            event.probability = newProbability;
+            placedEvents[newProbability].push(event);
+            
+            updatePlacedEventsDisplay();
+        }
+
+        function deleteEvent(event) {
+            if (confirm('Vill du ta bort denna händelse?')) {
+                placedEvents[event.probability] = placedEvents[event.probability].filter(e => e.id !== event.id);
+                updatePlacedEventsDisplay();
+                
+                // Check if we should show final view
+                const totalPlaced = probabilityOptions.reduce((sum, prob) => sum + placedEvents[prob].length, 0);
+                if (totalPlaced === 0 && currentEventIndex >= events.length) {
+                    document.getElementById('finalView').classList.add('hidden');
+                    document.getElementById('selectionArea').classList.remove('hidden');
+                }
+            }
+        }
+
+        // Drag and drop functionality
+        let draggedEvent = null;
+
+        function handleDragStart(e) {
+            draggedEvent = {
+                id: parseInt(e.target.getAttribute('data-event-id')),
+                probability: parseInt(e.target.getAttribute('data-probability'))
+            };
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            const targetProbability = parseInt(e.currentTarget.getAttribute('data-prob'));
+            
+            if (draggedEvent && draggedEvent.probability !== targetProbability) {
+                const event = placedEvents[draggedEvent.probability].find(e => e.id === draggedEvent.id);
+                if (event) {
+                    moveEvent(event, targetProbability);
+                }
+            }
+        }
+
+        function showFinalView() {
+            document.getElementById('selectionArea').classList.add('hidden');
+            document.getElementById('finalView').classList.remove('hidden');
+            
+            const totalPlaced = probabilityOptions.reduce((sum, prob) => sum + placedEvents[prob].length, 0);
+            document.getElementById('totalPlaced').textContent = totalPlaced;
+        }
+
+        function restartGame() {
+            currentEventIndex = 0;
+            placedEvents = {
+                0: [],
+                5: [],
+                25: [],
+                50: [],
+                75: [],
+                95: [],
+                100: []
+            };
+            
+            document.getElementById('selectionArea').classList.remove('hidden');
+            document.getElementById('finalView').classList.add('hidden');
+            document.getElementById('placedEventsSection').classList.add('hidden');
+            
+            initGame();
+        }
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
