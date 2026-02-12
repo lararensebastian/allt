@@ -1,312 +1,230 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sebastian's Undervisningsmaterial - IM-programmet</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sebastian's Undervisningsmaterial - IM-programmet</title>
 
-        body {
-            font-family: 'Garamond', serif;
-            background: #1a1a2e;
-            min-height: 100vh;
-            padding: 40px 20px;
-            color: #e0e0e0;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+body {
+    font-family: 'Garamond', serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 40px 20px;
+}
 
-        header {
-            margin-bottom: 60px;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #7b2cbf;
-        }
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
 
-        h1 {
-            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
-            color: #ffffff;
-            font-size: 2.8em;
-            margin-bottom: 15px;
-            font-weight: bold;
-            letter-spacing: -0.5px;
-        }
+header {
+    margin-bottom: 50px;
+    border-bottom: 2px solid #7b2cbf;
+    padding-bottom: 25px;
+}
 
-        .subtitle {
-            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
-            font-size: 1.2em;
-            color: #9d4edd;
-            font-weight: normal;
-        }
+h1 {
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 2.6em;
+    color: white;
+    margin-bottom: 10px;
+}
 
-        .intro {
-            background: #16213e;
-            border-left: 4px solid #7b2cbf;
-            padding: 30px;
-            margin-bottom: 50px;
-            border-radius: 8px;
-        }
+.subtitle {
+    font-family: 'Century Gothic', sans-serif;
+    color: #9d4edd;
+}
 
-        .intro p {
-            font-size: 1.15em;
-            line-height: 1.8;
-            color: #c0c0c0;
-        }
+.intro {
+    background: #16213e;
+    padding: 25px;
+    border-left: 4px solid #7b2cbf;
+    border-radius: 8px;
+    margin-bottom: 50px;
+}
 
-        .category-section {
-            margin-bottom: 60px;
-        }
+.category-title {
+    font-family: 'Century Gothic', sans-serif;
+    color: #9d4edd;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
 
-        .category-title {
-            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
-            color: #9d4edd;
-            font-size: 1.6em;
-            margin-bottom: 30px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
 
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 30px;
-        }
+.tool-card {
+    background: #16213e;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #2d3561;
+    transition: all 0.3s ease;
+}
 
-        .tool-card {
-            background: #16213e;
-            border-radius: 8px;
-            padding: 35px;
-            transition: all 0.3s ease;
-            border: 1px solid #2d3561;
-            position: relative;
-            overflow: hidden;
-        }
+.tool-card:hover {
+    transform: translateY(-5px);
+    border-color: #7b2cbf;
+    box-shadow: 0 10px 35px rgba(123, 44, 191, 0.3);
+}
 
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #7b2cbf, #9d4edd);
-            transition: width 0.3s ease;
-        }
+.tool-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
 
-        .tool-card:hover::before {
-            width: 100%;
-            opacity: 0.05;
-        }
+.tool-icon {
+    font-size: 1.8em;
+}
 
-        .tool-card:hover {
-            transform: translateY(-5px);
-            border-color: #7b2cbf;
-            box-shadow: 0 10px 40px rgba(123, 44, 191, 0.3);
-        }
+.tool-title {
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 1.3em;
+    color: white;
+}
 
-        .tool-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+.tool-meta {
+    margin-bottom: 15px;
+}
 
-        .tool-icon {
-            font-size: 2.2em;
-            filter: grayscale(20%);
-        }
+.badge {
+    display: inline-block;
+    background: #2d3561;
+    color: #9d4edd;
+    font-size: 0.75em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-right: 6px;
+    font-family: 'Century Gothic', sans-serif;
+}
 
-        .tool-title {
-            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
-            font-size: 1.4em;
-            color: #ffffff;
-            font-weight: bold;
-        }
+.tool-description {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #bfbfbf;
+}
 
-        .tool-description {
-            font-size: 1.05em;
-            color: #b0b0b0;
-            line-height: 1.7;
-            margin-bottom: 25px;
-        }
+.tool-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+    color: white;
+    text-decoration: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-family: 'Century Gothic', sans-serif;
+    font-weight: bold;
+    transition: 0.3s;
+}
 
-        .tool-meta {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+.tool-link:hover {
+    background: linear-gradient(135deg, #9d4edd, #c77dff);
+    box-shadow: 0 0 20px rgba(157, 78, 221, 0.6);
+}
 
-        .badge {
-            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
-            font-size: 0.8em;
-            padding: 4px 12px;
-            border-radius: 4px;
-            background: #2d3561;
-            color: #9d4edd;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+footer {
+    margin-top: 70px;
+    border-top: 1px solid #2d3561;
+    padding-top: 25px;
+    text-align: center;
+    color: #777;
+}
 
-        .tool-link {
-            display: inline-block;
-            background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
-            color: white;
-            padding: 12px 28px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
-            font-weight: bold;
-            font-size: 0.95em;
-            transition: all 0.3s;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
-        }
-
-        .tool-link:hover {
-            background: linear-gradient(135deg, #9d4edd 0%, #c77dff 100%);
-            box-shadow: 0 0 30px rgba(157, 78, 221, 0.8), 0 0 60px rgba(157, 78, 221, 0.4);
-        }
-
-        footer {
-            margin-top: 80px;
-            padding-top: 30px;
-            border-top: 1px solid #2d3561;
-            text-align: center;
-        }
-
-        footer p {
-            color: #707070;
-            font-size: 0.95em;
-            line-height: 1.8;
-        }
-
-        footer a {
-            color: #9d4edd;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.3s;
-        }
-
-        footer a:hover {
-            border-bottom-color: #9d4edd;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 20px 15px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            .subtitle {
-                font-size: 1.05em;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tool-card {
-                padding: 25px;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        ::selection {
-            background: #7b2cbf;
-            color: white;
-        }
-    </style>
+@media (max-width: 768px) {
+    body { padding: 20px 15px; }
+    h1 { font-size: 2em; }
+}
+</style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Sebastian's Undervisningsmaterial</h1>
-            <p class="subtitle">Interaktiva verktyg för IM-programmet</p>
-        </header>
 
-        <div class="intro">
-            <p>
-                Välkommen till en samling interaktiva verktyg för matematikundervisning. 
-                Alla resurser fungerar direkt i webbläsaren och är fritt tillgängliga för lärare och elever.
-            </p>
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Sebastian's Undervisningsmaterial</h1>
+    <p class="subtitle">Interaktiva verktyg för IM-programmet</p>
+</header>
+
+<div class="intro">
+    <p>
+        Välkommen till en samling interaktiva verktyg för matematikundervisning.
+        Alla resurser fungerar direkt i webbläsaren och är fritt tillgängliga.
+    </p>
+</div>
+
+<section>
+    <h2 class="category-title">Sannolikhetslära</h2>
+
+    <div class="tools-grid">
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <span class="tool-icon">🎯</span>
+                <div class="tool-title">IM's Sannolikhetsspel</div>
+            </div>
+            <div class="tool-meta">
+                <span class="badge">Diskussion</span>
+                <span class="badge">Klassrum</span>
+            </div>
+            <div class="tool-description">
+                Placera verklighetsnära händelser på en sannolikhetslinje.
+                Perfekt för gemensam diskussion och resonemang.
+            </div>
+            <a href="ims-sannolikhetsspel.html" class="tool-link">Öppna verktyg →</a>
         </div>
 
-        <section class="category-section">
-            <h2 class="category-title">Sannolikhetslära</h2>
-            
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">🎯</span>
-                        <h3 class="tool-title">IM's Sannolikhetsspel</h3>
-                    </div>
-                    <div class="tool-meta">
-                        <span class="badge">Diskussion</span>
-                        <span class="badge">Klassrum</span>
-                    </div>
-                    <p class="tool-description">
-                        Kollaborativt verktyg där klassen tillsammans placerar verklighetsnära händelser på en sannolikhetslinje. 
-                        Utvecklar förståelse för sannolikhet genom diskussion och gemensamt resonemang.
-                    </p>
-                    <a href="./ims-sannolikhetsspel.html" class="tool-link">Öppna verktyg →</a>
-                </div>
-
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">🎲</span>
-                        <h3 class="tool-title">IM's Sannolikhetssimulator</h3>
-                    </div>
-                    <div class="tool-meta">
-                        <span class="badge">Experiment</span>
-                        <span class="badge">Statistik</span>
-                    </div>
-                    <p class="tool-description">
-                        Praktisk simulator för tärningar, mynt och kort med realtidsstatistik. 
-                        Jämför teoretisk sannolikhet med verkliga resultat och visualisera lag av stora tal.
-                    </p>
-                    <a href="./sannolikhetssimulator.html" class="tool-link">Öppna verktyg →</a>
-                </div>
-
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">📊</span>
-                        <h3 class="tool-title">Sannolikhetsräkning</h3>
-                    </div>
-                    <div class="tool-meta">
-                        <span class="badge">Träning</span>
-                        <span class="badge">Individuell</span>
-                    </div>
-                    <p class="tool-description">
-                        Strukturerad träning i sannolikhetsberäkning med bråk. 
-                        Visuella hjälpmedel, direkta förklaringar och progressiv svårighetsgrad.
-                    </p>
-                    <a href="./sannolikhetsrakning-traning.html" class="tool-link">Öppna verktyg →</a>
-                </div>
+        <div class="tool-card">
+            <div class="tool-header">
+                <span class="tool-icon">🎲</span>
+                <div class="tool-title">IM's Sannolikhetssimulator</div>
             </div>
-        </section>
+            <div class="tool-meta">
+                <span class="badge">Experiment</span>
+                <span class="badge">Statistik</span>
+            </div>
+            <div class="tool-description">
+                Simulera tärningar, mynt och kort. Jämför teori med verkligt utfall.
+            </div>
+            <a href="sannolikhetssimulator.html" class="tool-link">Öppna verktyg →</a>
+        </div>
 
-        <footer>
-            <p>
-                <strong>Sebastian's Undervisningsmaterial</strong><br>
-                IM-programmet • Alla verktyg är fritt tillgängliga
-            </p>
-        </footer>
+        <div class="tool-card">
+            <div class="tool-header">
+                <span class="tool-icon">📊</span>
+                <div class="tool-title">Sannolikhetsräkning</div>
+            </div>
+            <div class="tool-meta">
+                <span class="badge">Träning</span>
+                <span class="badge">Individuell</span>
+            </div>
+            <div class="tool-description">
+                Träning i sannolikhetsberäkning med visuellt stöd och stegvis svårighet.
+            </div>
+            <a href="sannolikhetsrakning-traning.html" class="tool-link">Öppna verktyg →</a>
+        </div>
+
     </div>
+</section>
+
+<footer>
+    <p>
+        <strong>Sebastian's Undervisningsmaterial</strong><br>
+        IM-programmet • Fritt tillgängligt
+    </p>
+</footer>
+
+</div>
 </body>
 </html>
