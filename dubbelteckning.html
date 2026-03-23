@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dubbelteckning – Träna stavning</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --text: #2d2a26;
+  --text-light: #6b6560;
+  --accent: #e85d3a;
+  --accent-hover: #d14e2d;
+  --green: #2ea66a;
+  --green-light: #e8f8ef;
+  --red: #d94452;
+  --red-light: #fde8ea;
+  --blue: #3a7ce8;
+  --blue-light: #e8f0fd;
+  --yellow: #f0a830;
+  --yellow-light: #fef6e4;
+  --purple: #7c5cbf;
+  --purple-light: #f0ebfa;
+  --border: #e8e2da;
+  --shadow: 0 2px 12px rgba(45,42,38,0.08);
+  --shadow-lg: 0 8px 30px rgba(45,42,38,0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+.dark {
+  --bg: #1a1817;
+  --card: #262320;
+  --text: #ece7e0;
+  --text-light: #9e9690;
+  --border: #3a3632;
+  --shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.theme-btn {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.theme-btn:hover { transform: scale(1.1); }
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+/* Screen management */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Start screen */
+.hero-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.2rem;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.hero-sub {
+  color: var(--text-light);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.rule-box {
+  background: var(--yellow-light);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--yellow);
+}
+
+.dark .rule-box {
+  background: rgba(240,168,48,0.12);
+}
+
+.rule-box h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--yellow);
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.rule-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.rule-row .tag {
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.tag-long { background: var(--green-light); color: var(--green); }
+.tag-short { background: var(--red-light); color: var(--red); }
+.dark .tag-long { background: rgba(46,166,106,0.2); }
+.dark .tag-short { background: rgba(217,68,82,0.2); }
+
+.rule-note {
+  margin-top: 10px;
+  font-size: 0.88rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Level buttons */
+.levels { display: flex; flex-direction: column; gap: 10px; }
+
+.level-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text);
+}
+
+.level-btn:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: var(--shadow);
+}
+
+.level-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.level-btn .title { font-weight: 800; font-size: 1rem; }
+.level-btn .desc { font-size: 0.85rem; color: var(--text-light); margin-top: 2px; }
+
+.icon-1 { background: var(--green-light); }
+.icon-2 { background: var(--blue-light); }
+.icon-3 { background: var(--purple-light); }
+.icon-4 { background: var(--yellow-light); }
+.icon-5 { background: var(--red-light); }
+.dark .icon-1 { background: rgba(46,166,106,0.18); }
+.dark .icon-2 { background: rgba(58,124,232,0.18); }
+.dark .icon-3 { background: rgba(124,92,191,0.18); }
+.dark .icon-4 { background: rgba(240,168,48,0.18); }
+.dark .icon-5 { background: rgba(217,68,82,0.18); }
+
+/* Best score badge */
+.best-badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--yellow);
+  background: var(--yellow-light);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.dark .best-badge { background: rgba(240,168,48,0.15); }
+
+/* Progress bar */
+.progress-wrap {
+  margin-bottom: 20px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Quiz question */
+.question-card {
+  text-align: center;
+}
+
+.sentence {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.sentence .blank {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 3px dashed var(--accent);
+  margin: 0 4px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.opt-btn {
+  padding: 16px 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text);
+}
+
+.opt-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(232,93,58,0.06);
+}
+
+.opt-btn.correct {
+  border-color: var(--green);
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.opt-btn.wrong {
+  border-color: var(--red);
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.dark .opt-btn.correct { background: rgba(46,166,106,0.15); }
+.dark .opt-btn.wrong { background: rgba(217,68,82,0.15); }
+
+.feedback {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.feedback.show { display: block; animation: fadeIn 0.2s ease; }
+.feedback.correct { background: var(--green-light); color: var(--green); }
+.feedback.wrong { background: var(--red-light); color: var(--red); }
+.dark .feedback.correct { background: rgba(46,166,106,0.15); }
+.dark .feedback.wrong { background: rgba(217,68,82,0.15); }
+
+/* Explanation box for hidden doubles */
+.explanation {
+  padding: 14px 18px;
+  background: var(--blue-light);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--blue);
+  margin-bottom: 14px;
+  display: none;
+  font-weight: 600;
+}
+.dark .explanation { background: rgba(58,124,232,0.12); }
+.explanation.show { display: block; animation: fadeIn 0.2s ease; }
+
+/* Next button */
+.next-btn {
+  display: none;
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.next-btn:hover { background: var(--accent-hover); }
+.next-btn.show { display: block; }
+
+/* Sound button */
+.sound-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--blue-light);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.dark .sound-btn { background: rgba(58,124,232,0.15); }
+.sound-btn:hover { transform: scale(1.15); }
+
+/* Texts screen */
+.text-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+
+.text-body {
+  font-size: 1.05rem;
+  line-height: 2;
+  margin-bottom: 20px;
+}
+
+.text-body select {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--accent);
+  cursor: pointer;
+  appearance: auto;
+}
+
+.text-body select.correct-sel {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-light);
+}
+
+.text-body select.wrong-sel {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-light);
+}
+
+/* Buttons generic */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--card); color: var(--text); border: 2px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); }
+.btn-block { width: 100%; }
+
+/* Results */
+.result-big {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.result-score {
+  font-family: 'Fredoka One', cursive;
+  font-size: 3.5rem;
+  color: var(--accent);
+}
+
+.result-label {
+  font-size: 1rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.result-bar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.result-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.6s ease;
+}
+
+.wrong-list {
+  margin-top: 16px;
+}
+
+.wrong-list h3 {
+  font-size: 0.9rem;
+  color: var(--red);
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.wrong-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--red-light);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.dark .wrong-item { background: rgba(217,68,82,0.12); }
+
+.wrong-item .your-answer { color: var(--red); }
+.wrong-item .correct-answer { color: var(--green); }
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* Confetti */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -20px;
+  animation: confettiFall 2.5s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Text selector nav */
+.text-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.text-nav-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.15s;
+}
+
+.text-nav-btn.active, .text-nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.question-card { position: relative; }
+
+/* Back button */
+.back-row {
+  margin-bottom: 16px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.back-btn:hover { color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 400px) {
+  .hero-title { font-size: 1.7rem; }
+  .options { grid-template-columns: 1fr; }
+  .card { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">Dubbelteckning</div>
+    <button class="theme-btn" id="themeBtn" title="Byt tema">🌙</button>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="screen active" id="startScreen">
+    <div class="card">
+      <h1 class="hero-title">Träna dubbel&shy;teckning</h1>
+      <p class="hero-sub">Lär dig skillnaden mellan enkel och dubbel konsonant i svenska ord.</p>
+
+      <div class="rule-box">
+        <h3>Grundregeln</h3>
+        <div class="rule-row">
+          <span class="tag tag-long">LÅNG VOKAL</span>
+          <span>→ ofta en konsonant: <strong>mat, glas, tak</strong></span>
+        </div>
+        <div class="rule-row">
+          <span class="tag tag-short">KORT VOKAL</span>
+          <span>→ ofta dubbel konsonant: <strong>matt, glass, tack</strong></span>
+        </div>
+        <p class="rule-note">Men vissa vanliga ord måste du bara träna extra på!</p>
+      </div>
+
+      <div class="levels" id="levelButtons"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="screen" id="quizScreen">
+    <div class="back-row">
+      <button class="back-btn" onclick="goHome()">← Tillbaka</button>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progressLabel">Fråga 1 av 10</span>
+        <span id="scoreLabel">0 rätt</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="card question-card" id="questionCard">
+      <button class="sound-btn" id="soundBtn" title="Lyssna" onclick="speakWord()">🔊</button>
+      <p class="sentence" id="sentence"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="explanation" id="explanation"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Nästa fråga →</button>
+    </div>
+  </div>
+
+  <!-- TEXTS SCREEN -->
+  <div class="screen" id="textsScreen">
+    <div class="back-row">
+      <button class="back-btn" onclick="goHome()">← Tillbaka</button>
+    </div>
+    <div class="card">
+      <div class="text-nav" id="textNav"></div>
+      <h2 class="text-title" id="textTitle"></h2>
+      <div class="text-body" id="textBody"></div>
+      <button class="btn btn-primary btn-block" id="checkTextBtn" onclick="checkText()">Kontrollera svar</button>
+      <div id="textResult" style="margin-top:16px;display:none;">
+        <div class="feedback show" id="textFeedback"></div>
+        <button class="btn btn-secondary btn-block" onclick="goHome()" style="margin-top:10px;">Till startsidan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="screen" id="resultScreen">
+    <div class="card">
+      <div class="result-big">
+        <div class="result-score" id="resultScore"></div>
+        <div class="result-label" id="resultLabel"></div>
+      </div>
+      <div class="result-bar">
+        <div class="result-fill" id="resultFill"></div>
+      </div>
+      <div class="wrong-list" id="wrongList"></div>
+      <div class="result-actions">
+        <button class="btn btn-primary btn-block" id="retryWrongBtn" onclick="retryWrong()">Öva fel ord igen</button>
+        <button class="btn btn-secondary btn-block" onclick="goHome()">Till startsidan</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+// ========== DATA ==========
+
+const level1 = [
+  { sentence: "Jag åt min ___ snabbt.", options: ["mat","matt"], correct: "mat" },
+  { sentence: "Vi satt på en mjuk ___.", options: ["mat","matt"], correct: "matt" },
+  { sentence: "Han tog på sig sin ___.", options: ["hat","hatt"], correct: "hatt" },
+  { sentence: "Det här köttet är inte ___ längre.", options: ["fet","fett"], correct: "fett" },
+  { sentence: "Jag drack vatten ur ett ___.", options: ["glas","glass"], correct: "glas" },
+  { sentence: "På sommaren äter jag gärna ___.", options: ["glas","glass"], correct: "glass" },
+  { sentence: "Vi åkte ___ till stan.", options: ["bus","buss"], correct: "buss" },
+  { sentence: "Skriv en rad i din ___.", options: ["bok","bock"], correct: "bok" },
+  { sentence: "På berget gick en ___.", options: ["bok","bock"], correct: "bock" },
+  { sentence: "Katten satt på ___.", options: ["tak","tack"], correct: "tak" },
+  { sentence: "Jag vill säga ___ för hjälpen.", options: ["tak","tack"], correct: "tack" },
+  { sentence: "Han sa att det var väldigt ___.", options: ["lät","lätt"], correct: "lätt" },
+  { sentence: "Jag kan se att vasen är ___.", options: ["vas","vass"], correct: "vass" },
+  { sentence: "Hon lade blommorna i en fin ___.", options: ["vas","vass"], correct: "vas" },
+  { sentence: "Skåpet var alldeles för ___.", options: ["ful","full"], correct: "full" },
+];
+
+const level2 = [
+  { sentence: "Hon ___ så arg när hon kom in.", options: ["lät","lätt"], correct: "lät" },
+  { sentence: "Vi gick ut på en grön ___.", options: ["val","vall"], correct: "vall" },
+  { sentence: "Jag gjorde mitt ___ i valet.", options: ["val","vall"], correct: "val" },
+  { sentence: "Det stod en ___ i skogen.", options: ["bar","barr"], correct: "bar" },
+  { sentence: "Trädet hade gröna ___.", options: ["bar","barr"], correct: "barr" },
+  { sentence: "Hon bor i en stor ___.", options: ["vila","villa"], correct: "villa" },
+  { sentence: "Efter träningen vill jag ___.", options: ["vila","villa"], correct: "vila" },
+  { sentence: "Jag åt varm ___ till lunch.", options: ["sopa","soppa"], correct: "soppa" },
+  { sentence: "Du får inte ___ sönder dörren.", options: ["haka","hacka"], correct: "hacka" },
+  { sentence: "Vi måste ___ undan bilen lite.", options: ["backa","baka"], correct: "backa" },
+  { sentence: "Mamma ska ___ en kaka.", options: ["backa","baka"], correct: "baka" },
+  { sentence: "Det började ___ från röret.", options: ["leka","läcka"], correct: "läcka" },
+  { sentence: "Barnen vill ___ ute.", options: ["leka","läcka"], correct: "leka" },
+  { sentence: "Jag såg bilen på ___.", options: ["vägen","väggen"], correct: "vägen" },
+  { sentence: "Tavlan hängde på ___.", options: ["vägen","väggen"], correct: "väggen" },
+  { sentence: "Hon höll ett ___ om vänskap.", options: ["tal","tall"], correct: "tal" },
+  { sentence: "I skogen stod en hög ___.", options: ["tal","tall"], correct: "tall" },
+  { sentence: "Det ___ ett litet djur i skogen.", options: ["kär","kärr"], correct: "kärr" },
+  { sentence: "Fiskarna simmar i en ___.", options: ["sil","sill"], correct: "sill" },
+  { sentence: "Hästen fick ett fint ___.", options: ["föl","föll"], correct: "föl" },
+];
+
+const level3Hidden = [
+  { sentence: "Han tog en ___ ur fickan.", options: ["kam","kamm","kammar"], correct: "kam", related: "kammar", explanation: "Grundordet 'kam' stavas med ett m, men i böjd form 'kammar' syns dubbelteckningen." },
+  { sentence: "Frisören ___ mitt hår.", options: ["kamar","kammar","kamar"], correct: "kammar", related: "kam", explanation: "I 'kammar' hör du kort vokal och ser dubbelt m. Grundformen 'kam' döljer det." },
+  { sentence: "Det hänger en fin ___ på väggen.", options: ["ram","ramm","raam"], correct: "ram", related: "rammar", explanation: "Kort vokal i 'ram' – dubbelteckningen syns i 'rammar'." },
+  { sentence: "Fotona sitter i sina ___.", options: ["ramar","rammar","ramor"], correct: "rammar", related: "ram", explanation: "I 'rammar' ser du tydligt dubbelt m." },
+  { sentence: "Det ligger en ___ i vägen.", options: ["dam","damm","daam"], correct: "dam", related: "dammar", explanation: "'Dam' har kort vokal – i 'dammar' syns dubbelteckningen." },
+  { sentence: "Han ___ hem sent i går.", options: ["kom","komm","komd"], correct: "kom", related: "komma", explanation: "'Kom' har kort vokal, ett m. I 'komma' syns dubbelteckningen." },
+  { sentence: "Du måste ___ hit snart!", options: ["koma","komma","comma"], correct: "komma", related: "kom", explanation: "Dubbelt m i 'komma' visar att vokalen i 'kom' är kort." },
+  { sentence: "Läraren ___ snart tillbaka.", options: ["komer","kommer","kommar"], correct: "kommer", related: "kom", explanation: "'Kommer' har dubbelt m – det visar att 'kom' har kort vokal." },
+  { sentence: "En ___ stod vid dörren.", options: ["man","mann","maan"], correct: "man", related: "mannen", explanation: "'Man' har kort vokal. I 'mannen' syns dubbelteckningen." },
+  { sentence: "___ var lång och hade glasögon.", options: ["Manen","Mannen","Manne"], correct: "Mannen", related: "man", explanation: "Dubbelt n i 'mannen' visar att 'man' har kort vokal." },
+  { sentence: "Jag ___ inte komma i dag.", options: ["kan","kann","cann"], correct: "kan", related: "kunna", explanation: "'Kan' har kort vokal. Släktordet 'kunna' har dubbelt n." },
+  { sentence: "Jag ___ verkligen åka dit.", options: ["vil","vill","vild"], correct: "vill", related: "vilja", explanation: "'Vill' har dubbelt l. Det syns även i 'fylla' (full → fylla)." },
+  { sentence: "Vi är äntligen ___!", options: ["hema","hemma","hamma"], correct: "hemma", related: "hemmet", explanation: "'Hemma' har dubbelt m, och det syns i 'hemmet' också." },
+  { sentence: "Är alla ___ nu?", options: ["ine","inne","inna"], correct: "inne", related: "inomhus", explanation: "'Inne' har dubbelt n – släkt med 'inomhus'." },
+];
+
+const texts = [
+  {
+    title: "Glasskatastrofen i hallen",
+    parts: [
+      "I går gick jag in i ",{options:["halen","hallen"],correct:"hallen"}," för att äta ",{options:["glas","glass"],correct:"glass"},".",
+      "\nJag satte min ",{options:["hat","hatt"],correct:"hatt"}," på en ",{options:["mata","matta"],correct:"matta"}," och började äta snabbt.",
+      "\nPlötsligt kom en arg katt och hoppade upp på ",{options:["matan","mattan"],correct:"mattan"},".",
+      "\nDå tappade jag mitt ",{options:["glas","glass"],correct:"glas"}," i golvet.",
+      "\nDet blev kross över hela ",{options:["halen","hallen"],correct:"hallen"},".",
+      "\nMin kompis sa: \"Det där var inte så ",{options:["lät","lätt"],correct:"lätt"},".\"\n",
+      "Jag svarade: \"Nej, men jag blev i alla fall ",{options:["ful","full"],correct:"full"},".\""
+    ]
+  },
+  {
+    title: "Den märkliga bussen",
+    parts: [
+      "En morgon sprang jag till ",{options:["busen","bussen"],correct:"bussen"}," för att hinna till skolan.",
+      "\nMen när jag kom fram stod det en ko på en grön ",{options:["val","vall"],correct:"vall"},".",
+      "\nChaufören hade en rolig ",{options:["hat","hatt"],correct:"hatt"}," på huvudet.",
+      "\nHan höll i ett tomt ",{options:["glas","glass"],correct:"glas"}," och ropade:",
+      "\n\"Alla som vill åka måste först äta ",{options:["glas","glass"],correct:"glass"},"!\"",
+      "\nJag blev så chockad att jag nästan tappade min ",{options:["bok","bock"],correct:"bok"},".",
+      "\nSedan såg jag en skylt på ",{options:["vägen","väggen"],correct:"väggen"},".",
+      "\nDär stod det: \"Det är inte ",{options:["lät","lätt"],correct:"lätt"}," att köra buss över en ",{options:["val","vall"],correct:"vall"},".\""
+    ]
+  },
+  {
+    title: "Kungen med kammen",
+    parts: [
+      "En kung stod framför spegeln med en ",{options:["kam","kamm"],correct:"kam"}," i handen.",
+      "\nHan försökte ",{options:["kama","kamma"],correct:"kamma"}," sitt hår, men det gick inte alls.",
+      "\nDå ropade han på sin frisör: \"Kom hit och ",{options:["kama","kamma"],correct:"kamma"}," mig!\"",
+      "\nFrisören svarade: \"Jag ",{options:["komer","kommer"],correct:"kommer"}," snart!\"",
+      "\nKungen satte sig på en mjuk ",{options:["mata","matta"],correct:"matta"}," i sin stora ",{options:["vila","villa"],correct:"villa"},".",
+      "\nSedan tog han på sig sin fina ",{options:["hat","hatt"],correct:"hatt"}," och gick ut.",
+      "\nUtanför huset hörde han en ",{options:["bus","buss"],correct:"buss"}," stanna.",
+      "\nHan log och sa: \"Nu känns allt mycket ",{options:["lät","lätt"],correct:"lätt"},".\""
+    ]
+  }
+];
+
+const levelMeta = [
+  { id:"level1", title:"Nivå 1", desc:"Tydliga ordpar", icon:"🟢", iconClass:"icon-1" },
+  { id:"level2", title:"Nivå 2", desc:"Lite svårare ordpar", icon:"🔵", iconClass:"icon-2" },
+  { id:"level3", title:"Nivå 3", desc:"Dolda dubbelteckningar", icon:"🟣", iconClass:"icon-3" },
+  { id:"texts", title:"Roliga texter", desc:"Fyll i luckor i berättelser", icon:"📖", iconClass:"icon-4" },
+  { id:"all30", title:"Alla 30 meningar", desc:"Blanda allt – stor utmaning", icon:"🔥", iconClass:"icon-5" },
+];
+
+// ========== STATE ==========
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let wrongAnswers = [];
+let currentLevelId = "";
+let isHiddenMode = false;
+
+// ========== INIT ==========
+function init() {
+  renderLevelButtons();
+  loadTheme();
+}
+
+function renderLevelButtons() {
+  const c = document.getElementById('levelButtons');
+  c.innerHTML = '';
+  levelMeta.forEach(lv => {
+    const best = getBest(lv.id);
+    const bestHTML = best !== null ? `<span class="best-badge">Bäst: ${best}%</span>` : '';
+    const btn = document.createElement('button');
+    btn.className = 'level-btn';
+    btn.innerHTML = `
+      <div class="level-icon ${lv.iconClass}">${lv.icon}</div>
+      <div><div class="title">${lv.title}</div><div class="desc">${lv.desc}</div></div>
+      ${bestHTML}
+    `;
+    btn.onclick = () => startLevel(lv.id);
+    c.appendChild(btn);
+  });
+}
+
+// ========== NAVIGATION ==========
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goHome() {
+  renderLevelButtons();
+  showScreen('startScreen');
+}
+
+// ========== START LEVEL ==========
+function startLevel(levelId) {
+  currentLevelId = levelId;
+  isHiddenMode = (levelId === 'level3');
+
+  if (levelId === 'texts') {
+    startTexts();
+    return;
+  }
+
+  let questions;
+  if (levelId === 'level1') questions = shuffle([...level1]);
+  else if (levelId === 'level2') questions = shuffle([...level2]);
+  else if (levelId === 'level3') questions = shuffle([...level3Hidden]);
+  else if (levelId === 'all30') questions = shuffle([...level1, ...level2]);
+  else questions = [];
+
+  currentQuestions = questions;
+  currentIndex = 0;
+  score = 0;
+  wrongAnswers = [];
+  showScreen('quizScreen');
+  renderQuestion();
+}
+
+// ========== QUIZ ==========
+function renderQuestion() {
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+
+  document.getElementById('progressLabel').textContent = `Fråga ${currentIndex+1} av ${total}`;
+  document.getElementById('scoreLabel').textContent = `${score} rätt`;
+  document.getElementById('progressFill').style.width = `${((currentIndex)/total)*100}%`;
+
+  // Sentence with blank
+  const parts = q.sentence.split('___');
+  document.getElementById('sentence').innerHTML = parts[0] + '<span class="blank">?</span>' + (parts[1]||'');
+
+  // Options
+  const optC = document.getElementById('options');
+  // Deduplicate options
+  const uniqueOpts = [...new Set(q.options)];
+  const shuffledOpts = shuffle([...uniqueOpts]);
+  optC.innerHTML = '';
+  shuffledOpts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleAnswer(opt, q);
+    optC.appendChild(btn);
+  });
+
+  // Reset feedback
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  const expl = document.getElementById('explanation');
+  expl.className = 'explanation';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Sound button – store correct word
+  document.getElementById('soundBtn').dataset.word = q.correct;
+}
+
+function handleAnswer(chosen, q) {
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.correct) b.classList.add('correct');
+    if (b.textContent === chosen && chosen !== q.correct) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (chosen === q.correct) {
+    score++;
+    fb.className = 'feedback show correct';
+    fb.textContent = '✓ Rätt!';
+  } else {
+    fb.className = 'feedback show wrong';
+    fb.textContent = `✗ Fel! Rätt svar: ${q.correct}`;
+    wrongAnswers.push({ sentence: q.sentence, yourAnswer: chosen, correct: q.correct });
+  }
+
+  document.getElementById('scoreLabel').textContent = `${score} rätt`;
+
+  // Show explanation for hidden doubles
+  if (isHiddenMode && q.explanation) {
+    const expl = document.getElementById('explanation');
+    expl.textContent = q.explanation;
+    expl.className = 'explanation show';
+  }
+
+  document.getElementById('nextBtn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ========== RESULTS ==========
+function showResults() {
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+
+  document.getElementById('resultScore').textContent = `${pct}%`;
+  document.getElementById('resultLabel').textContent = `${score} av ${total} rätt`;
+
+  const fill = document.getElementById('resultFill');
+  fill.style.width = '0%';
+  fill.style.background = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  setTimeout(() => { fill.style.width = `${pct}%`; }, 100);
+
+  // Wrong list
+  const wl = document.getElementById('wrongList');
+  const retryBtn = document.getElementById('retryWrongBtn');
+  if (wrongAnswers.length > 0) {
+    wl.innerHTML = `<h3>Ord att öva på</h3>` +
+      wrongAnswers.map(w =>
+        `<div class="wrong-item"><span>${w.sentence.replace('___','<strong>?</strong>')}</span><span class="your-answer">${w.yourAnswer}</span> → <span class="correct-answer">${w.correct}</span></div>`
+      ).join('');
+    wl.style.display = 'block';
+    retryBtn.style.display = 'block';
+  } else {
+    wl.style.display = 'none';
+    retryBtn.style.display = 'none';
+  }
+
+  // Save best
+  saveBest(currentLevelId, pct);
+
+  showScreen('resultScreen');
+
+  if (pct === 100) launchConfetti();
+}
+
+function retryWrong() {
+  const retryQs = wrongAnswers.map(w => {
+    return currentQuestions.find(q => q.correct === w.correct && q.sentence === w.sentence) || currentQuestions[0];
+  });
+  currentQuestions = shuffle(retryQs);
+  currentIndex = 0;
+  score = 0;
+  wrongAnswers = [];
+  showScreen('quizScreen');
+  renderQuestion();
+}
+
+// ========== TEXTS ==========
+let currentTextIdx = 0;
+
+function startTexts() {
+  currentTextIdx = 0;
+  showScreen('textsScreen');
+  renderTextNav();
+  renderText(0);
+}
+
+function renderTextNav() {
+  const nav = document.getElementById('textNav');
+  nav.innerHTML = '';
+  texts.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'text-nav-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = `Text ${i+1}`;
+    btn.onclick = () => {
+      document.querySelectorAll('.text-nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderText(i);
+    };
+    nav.appendChild(btn);
+  });
+}
+
+function renderText(idx) {
+  currentTextIdx = idx;
+  const t = texts[idx];
+  document.getElementById('textTitle').textContent = t.title;
+  document.getElementById('textResult').style.display = 'none';
+
+  let html = '';
+  let selectCount = 0;
+  t.parts.forEach(part => {
+    if (typeof part === 'string') {
+      html += part.replace(/\n/g, '<br>');
+    } else {
+      html += `<select data-correct="${part.correct}" data-idx="${selectCount}">`;
+      html += `<option value="" disabled selected>välj</option>`;
+      part.options.forEach(o => {
+        html += `<option value="${o}">${o}</option>`;
+      });
+      html += `</select>`;
+      selectCount++;
+    }
+  });
+
+  document.getElementById('textBody').innerHTML = html;
+  document.getElementById('checkTextBtn').style.display = 'block';
+}
+
+function checkText() {
+  const selects = document.querySelectorAll('#textBody select');
+  let correct = 0;
+  let total = selects.length;
+
+  selects.forEach(sel => {
+    sel.disabled = true;
+    if (sel.value === sel.dataset.correct) {
+      correct++;
+      sel.className = 'correct-sel';
+    } else {
+      sel.className = 'wrong-sel';
+    }
+  });
+
+  const pct = Math.round((correct/total)*100);
+  const fb = document.getElementById('textFeedback');
+  fb.className = pct >= 80 ? 'feedback show correct' : 'feedback show wrong';
+  fb.textContent = `${correct} av ${total} rätt (${pct}%)`;
+  document.getElementById('textResult').style.display = 'block';
+  document.getElementById('checkTextBtn').style.display = 'none';
+
+  if (pct === 100) launchConfetti();
+}
+
+// ========== SOUND ==========
+function speakWord() {
+  const word = document.getElementById('soundBtn').dataset.word;
+  if (!word) return;
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = 'sv-SE';
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+
+// ========== THEME ==========
+function loadTheme() {
+  const dark = localStorage.getItem('dt-dark') === 'true';
+  if (dark) document.body.classList.add('dark');
+  updateThemeBtn();
+}
+
+function updateThemeBtn() {
+  document.getElementById('themeBtn').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+}
+
+document.getElementById('themeBtn').onclick = () => {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('dt-dark', document.body.classList.contains('dark'));
+  updateThemeBtn();
+};
+
+// ========== LOCAL STORAGE ==========
+function getBest(levelId) {
+  const v = localStorage.getItem('dt-best-' + levelId);
+  return v !== null ? parseInt(v) : null;
+}
+
+function saveBest(levelId, pct) {
+  const prev = getBest(levelId);
+  if (prev === null || pct > prev) {
+    localStorage.setItem('dt-best-' + levelId, pct);
+  }
+}
+
+// ========== CONFETTI ==========
+function launchConfetti() {
+  const c = document.getElementById('confetti');
+  c.innerHTML = '';
+  const colors = ['#e85d3a','#2ea66a','#3a7ce8','#f0a830','#7c5cbf','#d94452'];
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random()*100 + '%';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = Math.random()*1 + 's';
+    p.style.animationDuration = (2 + Math.random()*1.5) + 's';
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    p.style.width = (6 + Math.random()*8) + 'px';
+    p.style.height = (6 + Math.random()*8) + 'px';
+    c.appendChild(p);
+  }
+  setTimeout(() => { c.innerHTML = ''; }, 4000);
+}
+
+// ========== UTILS ==========
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ========== START ==========
+init();
+</script>
+</body>
+</html>
