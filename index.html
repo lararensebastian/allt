@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Användbara länkar för lärare på IM-programmet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf7f2;
+      --card: #ffffff;
+      --text: #1e1a14;
+      --muted: #7a7065;
+      --border: #e8e2d8;
+
+      --cat1-bg: #f5e6d0; --cat1-acc: #c47c2b;
+      --cat2-bg: #deecd6; --cat2-acc: #4a8c3f;
+      --cat3-bg: #d9e8f5; --cat3-acc: #2c6fa8;
+      --cat4-bg: #ead6f0; --cat4-acc: #7b3fa0;
+
+      --tag-svenska-bg:  #fff0d6; --tag-svenska-acc: #b56b00;
+      --tag-sva-bg:      #fce4ec; --tag-sva-acc: #b0003a;
+      --tag-engelska-bg: #e3f2fd; --tag-engelska-acc: #1565c0;
+      --tag-matte-bg:    #e8f5e9; --tag-matte-acc: #2e7d32;
+      --tag-so-bg:       #fce4f0; --tag-so-acc: #880e4f;
+      --tag-no-bg:       #e8eaf6; --tag-no-acc: #283593;
+      --tag-idrott-bg:   #fff8e1; --tag-idrott-acc: #f57f17;
+
+      --cat5-bg: #fde8d8; --cat5-acc: #c0390b;
+      --cat6-bg: #e8f5e9; --cat6-acc: #2e7d32;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    header {
+      padding: 52px 40px 28px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    header h1 span { color: var(--cat1-acc); }
+    header p { margin-top: 10px; font-size: 0.95rem; color: var(--muted); }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 40px 28px;
+    }
+    .filter-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .cat-pill {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cat-pill:hover { border-color: #bbb; color: var(--text); }
+    .cat-pill.active { background: var(--text); border-color: var(--text); color: #fff; }
+
+    .divider { width: 1px; height: 22px; background: var(--border); }
+
+    .subj-pill {
+      padding: 5px 13px;
+      border-radius: 999px;
+      border: 1.5px solid transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      opacity: 0.65;
+    }
+    .subj-pill:hover { opacity: 1; }
+    .subj-pill.active { opacity: 1; font-weight: 600; box-shadow: 0 0 0 2px currentColor; }
+
+    .subj-pill[data-subj="svenska"]  { background: var(--tag-svenska-bg);  color: var(--tag-svenska-acc);  border-color: var(--tag-svenska-acc); }
+    .subj-pill[data-subj="sva"]      { background: var(--tag-sva-bg);      color: var(--tag-sva-acc);      border-color: var(--tag-sva-acc); }
+    .subj-pill[data-subj="engelska"] { background: var(--tag-engelska-bg); color: var(--tag-engelska-acc); border-color: var(--tag-engelska-acc); }
+    .subj-pill[data-subj="matte"]    { background: var(--tag-matte-bg);    color: var(--tag-matte-acc);    border-color: var(--tag-matte-acc); }
+    .subj-pill[data-subj="so"]       { background: var(--tag-so-bg);       color: var(--tag-so-acc);       border-color: var(--tag-so-acc); }
+    .subj-pill[data-subj="no"]       { background: var(--tag-no-bg);       color: var(--tag-no-acc);       border-color: var(--tag-no-acc); }
+    .subj-pill[data-subj="idrott"]   { background: var(--tag-idrott-bg);   color: var(--tag-idrott-acc);   border-color: var(--tag-idrott-acc); }
+
+    /* ── MAIN ── */
+    main { max-width: 960px; margin: 0 auto; padding: 0 40px; }
+
+    .cat-group { margin-bottom: 48px; }
+    .cat-group[data-cat="formativ"] { --acc: var(--cat1-acc); --bg: var(--cat1-bg); }
+    .cat-group[data-cat="design"]   { --acc: var(--cat2-acc); --bg: var(--cat2-bg); }
+    .cat-group[data-cat="spel"]     { --acc: var(--cat3-acc); --bg: var(--cat3-bg); }
+    .cat-group[data-cat="ljud"]     { --acc: var(--cat4-acc); --bg: var(--cat4-bg); }
+    .cat-group[data-cat="escaperoom"] { --acc: var(--cat5-acc); --bg: var(--cat5-bg); }
+    .cat-group[data-cat="matte"]      { --acc: var(--cat6-acc); --bg: var(--cat6-bg); }
+
+    .cat-header { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .cat-emoji {
+      width: 40px; height: 40px;
+      border-radius: 11px;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .cat-header h2 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.07);
+      border-color: var(--acc);
+    }
+    .card-top-bar { height: 4px; background: var(--acc); }
+    .card-body { padding: 18px 20px 16px; flex: 1; display: flex; flex-direction: column; gap: 11px; }
+
+    .card-title-row { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card h3 { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+    .card-arrow { font-size: 0.9rem; opacity: 0.3; transition: opacity 0.15s, transform 0.15s; flex-shrink: 0; margin-left: 6px; padding-top: 2px; }
+    .card:hover .card-arrow { opacity: 0.7; transform: translate(2px,-2px); }
+
+    /* examples */
+    .card-examples { display: flex; flex-direction: column; gap: 7px; }
+    .example-item {
+      border-left: 2px solid var(--border);
+      padding: 4px 0 4px 10px;
+    }
+    .example-subj {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .example-text { font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
+
+    /* tags */
+    .card-tags { display: flex; flex-wrap: wrap; gap: 5px; padding-top: 2px; }
+    .tag {
+      font-size: 0.7rem; font-weight: 600;
+      padding: 2px 9px; border-radius: 999px;
+    }
+    .tag[data-subj="svenska"]  { background: var(--tag-svenska-bg);  color: var(--tag-svenska-acc); }
+    .tag[data-subj="sva"]      { background: var(--tag-sva-bg);      color: var(--tag-sva-acc); }
+    .tag[data-subj="engelska"] { background: var(--tag-engelska-bg); color: var(--tag-engelska-acc); }
+    .tag[data-subj="matte"]    { background: var(--tag-matte-bg);    color: var(--tag-matte-acc); }
+    .tag[data-subj="so"]       { background: var(--tag-so-bg);       color: var(--tag-so-acc); }
+    .tag[data-subj="no"]       { background: var(--tag-no-bg);       color: var(--tag-no-acc); }
+    .tag[data-subj="idrott"]   { background: var(--tag-idrott-bg);   color: var(--tag-idrott-acc); }
+
+    /* highlight matching example when subject filtered */
+    .example-item.highlight { border-left-color: var(--acc); background: color-mix(in srgb, var(--bg) 60%, transparent); border-radius: 0 6px 6px 0; }
+
+    /* escape room badge on card */
+    .er-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #fde8d8;
+      color: var(--cat5-acc);
+      border: 1.5px solid var(--cat5-acc);
+      letter-spacing: 0.02em;
+    }
+
+    /* escape room filter pill — styled differently from subjects */
+    .er-pill {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--cat5-acc);
+      background: #fde8d8;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--cat5-acc);
+      cursor: pointer;
+      transition: all 0.15s;
+      opacity: 0.7;
+    }
+    .er-pill:hover { opacity: 1; }
+    .er-pill.active { background: var(--cat5-acc); color: #fff; opacity: 1; }
+
+    .card.hidden { display: none; }
+    .cat-group.hidden { display: none; }
+
+    @media (max-width: 600px) {
+      header, .filter-bar, main { padding-left: 18px; padding-right: 18px; }
+      header { padding-top: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Användbara länkar för lärare på <span>IM-programmet</span></h1>
+  <p>Interaktiva verktyg och digitala resurser för IM-programmet — filtrera efter kategori eller ämne.</p>
+</header>
+
+<div class="filter-bar">
+  <div class="filter-label">Filtrera</div>
+  <div class="filter-row">
+    <button class="cat-pill active" onclick="filterCat('alla',this)">Alla kategorier</button>
+    <button class="cat-pill" onclick="filterCat('matte',this)">📐 Matematik</button>
+    <button class="cat-pill" onclick="filterCat('formativ',this)">🧠 Formativ</button>
+    <button class="cat-pill" onclick="filterCat('design',this)">🎨 Design</button>
+    <button class="cat-pill" onclick="filterCat('spel',this)">🧩 Spel</button>
+    <button class="cat-pill" onclick="filterCat('ljud',this)">🎵 Ljud</button>
+    <button class="er-pill" onclick="filterCat('escaperoom',this)">🔐 Escape Room</button>
+    <div class="divider"></div>
+    <button class="subj-pill" data-subj="svenska"  onclick="filterSubj('svenska',this)">Svenska</button>
+    <button class="subj-pill" data-subj="sva"       onclick="filterSubj('sva',this)">SVA</button>
+    <button class="subj-pill" data-subj="engelska"  onclick="filterSubj('engelska',this)">Engelska</button>
+    <button class="subj-pill" data-subj="matte"     onclick="filterSubj('matte',this)">Matte</button>
+    <button class="subj-pill" data-subj="so"        onclick="filterSubj('so',this)">SO</button>
+    <button class="subj-pill" data-subj="no"        onclick="filterSubj('no',this)">NO</button>
+    <button class="subj-pill" data-subj="idrott"    onclick="filterSubj('idrott',this)">Idrott</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ══ MATEMATIK ══ -->
+  <div class="cat-group" data-cat="matte">
+    <div class="cat-header">
+      <div class="cat-emoji">📐</div>
+      <h2>Matematikverktyg</h2>
+    </div>
+    <div class="card-grid">
+
+      <a class="card" href="ims-sannolikhetsspel.html" data-subjects="matte">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>IM's Sannolikhetsspel</h3><span class="card-arrow">→</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--cat6-acc)">Matte – Sannolikhetslära</div>
+              <div class="example-text">Placera verklighetsnära händelser på en sannolikhetslinje. Perfekt för gemensam diskussion och resonemang kring vad som är möjligt, troligt och omöjligt.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="matte">Matte</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="sannolikhetssimulator.html" data-subjects="matte">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>IM's Sannolikhetssimulator</h3><span class="card-arrow">→</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--cat6-acc)">Matte – Experiment & statistik</div>
+              <div class="example-text">Simulera tärningar, mynt och kort direkt i webbläsaren. Låt elever jämföra teoretisk sannolikhet med verkligt utfall – bra grund för diskussion om stora tal.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="matte">Matte</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="sannolikhetsrakning-traning.html" data-subjects="matte">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Sannolikhetsräkning</h3><span class="card-arrow">→</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--cat6-acc)">Matte – Träning individuell</div>
+              <div class="example-text">Träning i sannolikhetsberäkning med visuellt stöd och stegvis svårighet. Passar bra som individuell övning eller läxa inför prov.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="matte">Matte</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ══ FORMATIV ══ -->
+  <div class="cat-group" data-cat="formativ">
+    <div class="cat-header">
+      <div class="cat-emoji">🧠</div>
+      <h2>Formativ bedömning</h2>
+    </div>
+    <div class="card-grid">
+      <a class="card" href="https://m365.cloud.microsoft/chat/?titleId=T_5af46bbc-198f-4d06-e658-0fd4a231421a&source=embedded-builder" target="_blank" rel="noopener" data-subjects="svenska sva engelska matte so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>IM-assistenten</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska / SVA</div>
+              <div class="example-text">Klistra in en elevtext – få strukturerad formativ feedback på innehåll, struktur och språk utan att behöva sätta betyg direkt.</div>
+            </div>
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--tag-matte-acc)">Matte</div>
+              <div class="example-text">Generera nivåanpassade uppgifter till ett kapitel – ange kunskapskrav och få färdiga frågor med facit.</div>
+            </div>
+            <div class="example-item" data-subj="so no engelska">
+              <div class="example-subj" style="color:var(--tag-so-acc)">SO / NO / Engelska</div>
+              <div class="example-text">Analysera elevsvar på öppna frågor och få förslag på framåtsyftande kommentarer.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ DESIGN ══ -->
+  <div class="cat-group" data-cat="design">
+    <div class="cat-header">
+      <div class="cat-emoji">🎨</div>
+      <h2>Design & skapande</h2>
+    </div>
+    <div class="card-grid">
+      <a class="card" href="https://www.canva.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska so no idrott">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Canva</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska / SVA</div>
+              <div class="example-text">Elever skapar en illustrerad berättelse eller diktsamling som poster – kombinerar skrivande med visuell gestaltning.</div>
+            </div>
+            <div class="example-item" data-subj="so">
+              <div class="example-subj" style="color:var(--tag-so-acc)">SO</div>
+              <div class="example-text">Informationsposter om ett samhällsproblem eller historisk händelse – elever presenterar med bild och text.</div>
+            </div>
+            <div class="example-item" data-subj="no engelska idrott">
+              <div class="example-subj" style="color:var(--tag-no-acc)">NO / Engelska / Idrott</div>
+              <div class="example-text">Infografik om kroppen, ekosystem eller ett engelskspråkigt land – höjer presentationsqualiteten direkt.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+            <span class="tag" data-subj="idrott">Idrott</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ SPEL ══ -->
+  <div class="cat-group" data-cat="spel">
+    <div class="cat-header">
+      <div class="cat-emoji">🧩</div>
+      <h2>Spel & övningar</h2>
+    </div>
+    <div class="card-grid">
+
+      <a class="card" href="https://snotes.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Snotes</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska / SVA</div>
+              <div class="example-text">Göm veckans nyckelord i en ordgömma – elever hittar begrepp från arbetsområdet som lektionsstart.</div>
+            </div>
+            <div class="example-item" data-subj="engelska">
+              <div class="example-subj" style="color:var(--tag-engelska-acc)">Engelska</div>
+              <div class="example-text">Vocabulary warm-up med ord från senaste lektionen – snabb fokusövning de första minuterna.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.jigsawplanet.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Jigsaw Planet</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="so">
+              <div class="example-subj" style="color:var(--tag-so-acc)">SO</div>
+              <div class="example-text">Ladda upp en karta och låt elever lägga ihop den – repeterar geografi eller historiska platser.</div>
+            </div>
+            <div class="example-item" data-subj="svenska sva">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska / SVA</div>
+              <div class="example-text">Pussel av ett bokomslag – öppnar samtal om texten innan läsning börjar.</div>
+            </div>
+            <div class="example-item" data-subj="no engelska">
+              <div class="example-subj" style="color:var(--tag-no-acc)">NO / Engelska</div>
+              <div class="example-text">Pussel av en bild kopplad till temat – rolig uppstarter som aktiverar förförståelse.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.proprofsgames.com/ugc/word-search/ord-inom-omrdet-lyrik/" target="_blank" rel="noopener" data-subjects="svenska sva engelska matte so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>ProProfs Games</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska</div>
+              <div class="example-text">Wordsearch med lyriska begrepp (metafor, rim, vers, strof) – inför eller efter ett poesiavsnitt.</div>
+            </div>
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--tag-matte-acc)">Matte</div>
+              <div class="example-text">Korsord med matematiktermer – elever definierar orden som repetition av ett kapitel.</div>
+            </div>
+            <div class="example-item" data-subj="no so engelska">
+              <div class="example-subj" style="color:var(--tag-no-acc)">NO / SO / Engelska</div>
+              <div class="example-text">Wordsearch med ämnesspecifika begrepp – enkel repetitionsaktivitet inför prov.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.mazegenerator.net/" target="_blank" rel="noopener" data-subjects="matte svenska sva">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Mazegenerator</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--tag-matte-acc)">Matte</div>
+              <div class="example-text">Labyrint med siffror – elever följer den väg där talen är delbara med t.ex. 3. Tränar taluppfattning utan att det känns som räkning.</div>
+            </div>
+            <div class="example-item" data-subj="svenska sva">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska / SVA</div>
+              <div class="example-text">Skriv ut en labyrint som paus-aktivitet – bra för elever som behöver landa i lektionen.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://lararensebastian.github.io/dagens-kluring/" target="_blank" rel="noopener" data-subjects="svenska sva engelska matte">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Dagens Kluring</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska / SVA</div>
+              <div class="example-text">Daglig språkkluring som lektionsstart – öppnar diskussion om ord, meningar eller grammatik.</div>
+            </div>
+            <div class="example-item" data-subj="matte">
+              <div class="example-subj" style="color:var(--tag-matte-acc)">Matte</div>
+              <div class="example-text">Mattekluring som brain warm-up – elever löser individuellt, sedan gemensam diskussion i par.</div>
+            </div>
+            <div class="example-item" data-subj="engelska">
+              <div class="example-subj" style="color:var(--tag-engelska-acc)">Engelska</div>
+              <div class="example-text">Engelska kluringar som reading-start – lagom korta och utmanande för IM-grupper.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="matte">Matte</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://jeopardylabs.se" target="_blank" rel="noopener" data-subjects="svenska sva engelska matte so no idrott">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Jeopardylabs</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska</div>
+              <div class="example-text">Repetitionsspel inför nationellt prov – kategorier som "Grammatik", "Texttyper" och "Litteratur".</div>
+            </div>
+            <div class="example-item" data-subj="so no">
+              <div class="example-subj" style="color:var(--tag-so-acc)">SO / NO</div>
+              <div class="example-text">Jeopardy om ett avslutat tema – elever tävlar i lag och motiverar sina svar.</div>
+            </div>
+            <div class="example-item" data-subj="matte engelska idrott">
+              <div class="example-subj" style="color:var(--tag-matte-acc)">Matte / Engelska / Idrott</div>
+              <div class="example-text">Avsluta ett arbetsområde med Jeopardy istället för ett traditionellt repetitionsprov.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+            <span class="tag" data-subj="idrott">Idrott</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ══ LJUD ══ -->
+  <div class="cat-group" data-cat="ljud">
+    <div class="cat-header">
+      <div class="cat-emoji">🎵</div>
+      <h2>Ljud & musik</h2>
+    </div>
+    <div class="card-grid">
+      <a class="card" href="https://suno.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska so">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Suno</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska">
+              <div class="example-subj" style="color:var(--tag-svenska-acc)">Svenska</div>
+              <div class="example-text">Elever omvandlar sin eget dikt till en låt – de skriver lyrics, du genererar musiken. Starkt avslut på ett poesitema.</div>
+            </div>
+            <div class="example-item" data-subj="sva">
+              <div class="example-subj" style="color:var(--tag-sva-acc)">SVA</div>
+              <div class="example-text">Skapa en "låt om lektionen" med fraser eleverna lärt sig – repeterar ordförråd på ett oväntat och motiverande sätt.</div>
+            </div>
+            <div class="example-item" data-subj="engelska">
+              <div class="example-subj" style="color:var(--tag-engelska-acc)">Engelska</div>
+              <div class="example-text">Skriv engelska lyrics tillsammans om ett ämne – kombinerar kreativt skrivande, grammatik och muntlig framställning.</div>
+            </div>
+            <div class="example-item" data-subj="so">
+              <div class="example-subj" style="color:var(--tag-so-acc)">SO</div>
+              <div class="example-text">Skapa en protestlåt om ett samhällsproblem gruppen arbetat med – hög motivation och meningsskapande.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="so">SO</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ ESCAPE ROOM ══ -->
+  <div class="cat-group" data-cat="escaperoom">
+    <div class="cat-header">
+      <div class="cat-emoji">🔐</div>
+      <h2>Escape Room</h2>
+    </div>
+    <div class="card-grid">
+
+      <a class="card" href="https://www.proprofsgames.com/ugc/word-search/ord-inom-omrdet-lyrik/" target="_blank" rel="noopener" data-subjects="svenska sva engelska matte so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>ProProfs Games</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva engelska matte so no">
+              <div class="example-subj" style="color:var(--cat5-acc)">Escape Room – ledtrådsstation</div>
+              <div class="example-text">Bygg en wordsearch eller ett korsord som en station i escape room:et – elever löser pusslet och får en kod eller ledtråd att ta med vidare.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.mazegenerator.net/" target="_blank" rel="noopener" data-subjects="matte svenska sva">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Mazegenerator</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="matte svenska sva">
+              <div class="example-subj" style="color:var(--cat5-acc)">Escape Room – fysisk station</div>
+              <div class="example-text">Skriv ut en labyrint och göm koden i målgången – klassisk fysisk station som fungerar i alla rum. Kan göras svårare med siffror längs rätt väg som bildar kombinationen.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://snotes.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Snotes</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva engelska">
+              <div class="example-subj" style="color:var(--cat5-acc)">Escape Room – krypterad ledtråd</div>
+              <div class="example-text">Göm nästa ledtråd som ett lösenordsskyddat Snotes-meddelande – elever knäcker koden från föregående station för att läsa texten och ta sig vidare.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.jigsawplanet.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Jigsaw Planet</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva engelska so no">
+              <div class="example-subj" style="color:var(--cat5-acc)">Escape Room – avslöja ledtråden</div>
+              <div class="example-text">Lägg ett pussel av en bild som innehåller nästa ledtråd eller kod – pusslet avslöjas successivt och ger ett dramatiskt "aha"-moment när bilden framträder.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://jeopardylabs.se" target="_blank" rel="noopener" data-subjects="svenska sva engelska matte so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Jeopardylabs</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva engelska matte so no">
+              <div class="example-subj" style="color:var(--cat5-acc)">Escape Room – kunskapsstation</div>
+              <div class="example-text">Använd Jeopardy som en digital station i escape room:et – rätt svar på en fråga ger koden. Fungerar bra som sista station innan "låset öppnas".</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="matte">Matte</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.canva.com/" target="_blank" rel="noopener" data-subjects="svenska sva engelska so no">
+        <div class="card-top-bar"></div>
+        <div class="card-body">
+          <div class="card-title-row"><h3>Canva</h3><span class="card-arrow">↗</span></div>
+          <div class="card-examples">
+            <div class="example-item" data-subj="svenska sva engelska so no">
+              <div class="example-subj" style="color:var(--cat5-acc)">Escape Room – design av material</div>
+              <div class="example-text">Designa de fysiska kuverten, ledtrådskorten och stationsaffischerna i Canva – snyggt material höjer känslan och gör escape room:et mer övertygande.</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag" data-subj="svenska">Svenska</span>
+            <span class="tag" data-subj="sva">SVA</span>
+            <span class="tag" data-subj="engelska">Engelska</span>
+            <span class="tag" data-subj="so">SO</span>
+            <span class="tag" data-subj="no">NO</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+  let activeCat = 'alla';
+  let activeSubj = null;
+
+  function filterCat(cat, btn) {
+    activeCat = cat;
+    activeSubj = null;
+    document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.er-pill').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.subj-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  function filterSubj(subj, btn) {
+    if (activeSubj === subj) {
+      activeSubj = null;
+      btn.classList.remove('active');
+    } else {
+      activeSubj = subj;
+      document.querySelectorAll('.subj-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = 'alla';
+      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.er-pill').forEach(b => b.classList.remove('active'));
+      document.querySelector('.cat-pill').classList.add('active');
+    }
+    applyFilters();
+  }
+
+  function applyFilters() {
+    document.querySelectorAll('.cat-group').forEach(group => {
+      const catMatch = activeCat === 'alla' || activeCat === group.dataset.cat;
+      let anyVisible = false;
+
+      group.querySelectorAll('.card').forEach(card => {
+        const subjs = (card.dataset.subjects || '').split(' ');
+        const subjMatch = !activeSubj || subjs.includes(activeSubj);
+        const show = catMatch && subjMatch;
+        card.classList.toggle('hidden', !show);
+        if (show) anyVisible = true;
+
+        // highlight relevant examples
+        card.querySelectorAll('.example-item').forEach(ex => {
+          if (!activeSubj) {
+            ex.classList.remove('highlight');
+          } else {
+            const exSubjs = (ex.dataset.subj || '').split(' ');
+            ex.classList.toggle('highlight', exSubjs.includes(activeSubj));
+          }
+        });
+      });
+
+      group.classList.toggle('hidden', !anyVisible);
+    });
+  }
+</script>
+
+<footer style="max-width:960px;margin:60px auto 0;padding:24px 40px;border-top:1.5px solid var(--border);text-align:center;color:var(--muted);font-size:0.85rem;">
+  <strong style="color:var(--text)">Sebastian's Undervisningsmaterial</strong> &nbsp;·&nbsp; IM-programmet &nbsp;·&nbsp; Fritt tillgängligt
+</footer>
+
+</body>
+</html>
